@@ -15,35 +15,35 @@ with open("symbols.csv",'w') as file:
     header_name = splitted[0]
 
     data = { 
-        'symbol': [header_name[0]],
-        'izin_code': [header_name[1]],
-        'brief_name': [header_name[2]],
-        'complete_name': [header_name[3]],
-        'col5': [header_name[4]],
-        'initial': [header_name[5]],
-        'latest': [header_name[6]],
-        'last_trans': [header_name[7]],
-        'trans_num': [header_name[8]],
-        'trans_turnovers': [header_name[9]],
-        'trans_values': [header_name[10]],
-        'lowest': [header_name[11]],
-        'highest': [header_name[12]],
-        'yesterday': [header_name[13]],
-        'Eps': [header_name[14]],
-        'basis_turnovers': [header_name[15]],
+        'symbol': [header_name[0]], # نماد 
+        'izin_code': [header_name[1]], # کد آیذین
+        'brief_name': [header_name[2]], # نام کوتاه
+        'complete_name': [header_name[3]], # نام کامل
+        'latest_trans_time': [header_name[4]], # زمان آخرین معامله
+        'first_price': [header_name[5]], # اولین قیمت
+        'latest_price': [header_name[6]], # آخرین قیمت
+        'last_trans': [header_name[7]], # آخرین معامله
+        'trans_num': [header_name[8]], # تعداد معاملات
+        'trans_turnovers': [header_name[9]], #حجم معاملات
+        'trans_value': [header_name[10]], # ارزش معاملات
+        'lowest': [header_name[11]], # بازه‌ی روز
+        'highest': [header_name[12]], # بازه‌ی روز
+        'yesterday_price': [header_name[13]], # قیمت دیروز
+        'Eps': [header_name[14]], # (درآمد هر سهم (حاصل تقسیم کل درآمد بر تعداد سهم
+        'basis_turnovers': [header_name[15]], # حجم مبنا
         'col17': [header_name[16]],
         'col18': [header_name[17]],
         'gp_code': [header_name[18]],
-        'allowed_highestprice': [header_name[19]],
-        'allowed_lowestprice': [header_name[20]],
-        'all_trans_nums': [header_name[21]],
+        'allowed_highestprice': [header_name[19]], # بالاترین قیمت مجاز
+        'allowed_lowestprice': [header_name[20]], # پائین ترین قیمت مجاز
+        'all_trans_nums': [header_name[21]], # تعداد سهام
         'col23': [header_name[22]],
     }
 
     df = pd.DataFrame(data, columns=[
-            'symbol', 'izin_code', 'brief_name', 'complete_name', 'col5',
-            'initial', 'latest', 'last_trans', 'trans_num', 'trans_turnovers', 
-            'trans_values', 'lowest', 'highest', 'yesterday', 'Eps', 'basis_turnovers',
+            'symbol', 'izin_code', 'brief_name', 'complete_name', 'latest_trans_time',
+            'first_price', 'latest_price', 'last_trans', 'trans_num', 'trans_turnovers', 
+            'trans_value', 'lowest', 'highest', 'yesterday_price', 'Eps', 'basis_turnovers',
             'col17', 'col18', 'gp_code', 'allowed_highestprice', 'allowed_lowestprice',
             'all_trans_nums', 'col23'], index=[0])
 
@@ -57,16 +57,16 @@ with open("symbols.csv",'w') as file:
             'izin_code': [item[1]],
             'brief_name': [item[2]],
             'complete_name': [item[3]],
-            'col5': [item[4]],
-            'initial': [item[5]],
-            'latest': [item[6]],
+            'latest_trans_time': [item[4]],
+            'first_price': [item[5]],
+            'latest_price': [item[6]],
             'last_trans': [item[7]],
             'trans_num': [item[8]],
             'trans_turnovers': [item[9]],
-            'trans_values': [item[10]],
+            'trans_value': [item[10]],
             'lowest': [item[11]],
             'highest': [item[12]],
-            'yesterday': [item[13]],
+            'yesterday_price': [item[13]],
             'Eps': [item[14]],
             'basis_turnovers': [item[15]],
             'col17': [item[16]],
@@ -79,12 +79,43 @@ with open("symbols.csv",'w') as file:
         }
     
         df = pd.DataFrame(data, columns=[
-                'symbol', 'izin_code', 'brief_name', 'complete_name', 'col5',
-                'initial', 'latest', 'last_trans', 'trans_num', 'trans_turnovers', 
-                'trans_values', 'lowest', 'highest', 'yesterday', 'Eps', 'basis_turnovers',
+                'symbol', 'izin_code', 'brief_name', 'complete_name', 'latest_trans_time',
+                'first_price', 'latest_price', 'last_trans', 'trans_num', 'trans_turnovers', 
+                'trans_value', 'lowest', 'highest', 'yesterday_price', 'Eps', 'basis_turnovers',
                 'col17', 'col18', 'gp_code', 'allowed_highestprice', 'allowed_lowestprice',
                 'all_trans_nums', 'col23'], index=[splitted.index(item)])
 
 
         df.to_csv('symbols.csv',mode="a", index = True, header=False)
     
+
+with open("symbols-date.csv") as file:
+
+     data = { 
+        'symbol': [header_name[0]], # نماد 
+        'jalali_date': [header_name[1]], # کد آیذین
+        'gregorian_date': [header_name[2]], # نام کوتاه
+        'complete_name': [header_name[3]], # نام کامل
+        'latest_trans_time': [header_name[4]], # زمان آخرین معامله
+        'first_price': [header_name[5]], # اولین قیمت
+        'latest_price': [header_name[6]], # آخرین قیمت
+        'last_trans': [header_name[7]], # آخرین معامله
+        'trans_num': [header_name[8]], # تعداد معاملات
+        'trans_turnovers': [header_name[9]], #حجم معاملات
+        'trans_value': [header_name[10]], # ارزش معاملات
+        'lowest': [header_name[11]], # بازه‌ی روز
+        'highest': [header_name[12]], # بازه‌ی روز
+        'yesterday_price': [header_name[13]], # قیمت دیروز
+        'Eps': [header_name[14]], # (درآمد هر سهم (حاصل تقسیم کل درآمد بر تعداد سهم
+        'basis_turnovers': [header_name[15]], # حجم مبنا
+        'col17': [header_name[16]],
+        'col18': [header_name[17]],
+        'gp_code': [header_name[18]],
+        'allowed_highestprice': [header_name[19]], # بالاترین قیمت مجاز
+        'allowed_lowestprice': [header_name[20]], # پائین ترین قیمت مجاز
+        'all_trans_nums': [header_name[21]], # تعداد سهام
+        'col23': [header_name[22]],
+    }
+
+
+
