@@ -30,7 +30,7 @@ if "posts" in collist:
     print("The collection exists.")
 
 
-#print table as a df
+# print collection as a df
 col_data = [data for data in coll_posts.find()]
 print(col_data) # this is as a json format
 df_col_data = pd.DataFrame(col_data)
@@ -242,6 +242,8 @@ print(x.deleted_count, " documents deleted.")
 # returns true false
 coll_posts.drop() 
 
+# drop db
+# client.drop_database('test')
 
 
 

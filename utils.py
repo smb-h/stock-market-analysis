@@ -1,27 +1,32 @@
-from peewee import *
 from bs4 import BeautifulSoup
 import os,requests,re
 
 
-def ready_to_insert(row):
-    splitted_row = row.split(',')
-    if len(splitted_row) == 8:
-        for i in range(15):
-            splitted_row.append('')
-    return splitted_row
 
-def ready_signs(rows):
-    ''' parameters = rows that are gotten from csv file as list
-        returns = a list of rows that are ready to be saved '''
+# Reformat data to save
+def ready_symbols(rows):
+    ''' 
+        parameters = rows that are gotten from csv file as list
+        returns = a list of rows that are ready to be saved 
+    '''
     splitted_row = list()
     for items in rows:
         for row in items:
-            splitted_row.append(ready_to_insert(row))
+            splitted_row_2 = row.split(',')
+            if len(splitted_row_2) == 8:
+                pass
+                # for i in range(15):
+                #     splitted_row_2.append('')
+            else:
+                splitted_row.append(splitted_row_2)
     return splitted_row
 
-def get_csv(url,name):
-    ''' parameters = url of the csv file to download
-        returns = a list of csv file rows '''
+# Download csv and return rows
+def get_csv_rows(url,name):
+    ''' 
+        parameters = url of the csv file to download
+        returns = a list of csv file rows 
+    '''
     rows = list()
     try:
         r = requests.get(url)
@@ -29,7 +34,7 @@ def get_csv(url,name):
         with open (os.path.join(pwd , name), 'wb') as file:
             file.write(r.content)
     except:
-        if (not os. path. isfile(name)):
+        if (not os.path.isfile(name)):
             print("something went wrong,couldn't download the file...")
     finally:
         if name == 'MarketWatchInit.csv':
@@ -44,7 +49,8 @@ def get_csv(url,name):
                 file = handle.read()
             rows = file.split(';')
             return rows
-            
+
+
 def ready_id(rows,i):
     ''' parameters = a list of rows gotten from csv file, i as string
         returns = a list of rows that are ready to be inserted to db i_d table '''
@@ -56,6 +62,7 @@ def ready_id(rows,i):
             new_rows.append(row)
     return new_rows            
 
+
 def check_tables(db,table_name):
     ''' parameters = db connection object, table name as string
         returns = True if table doesnt exist in db '''
@@ -64,7 +71,8 @@ def check_tables(db,table_name):
         return True
     else:
         return False
-    
+
+
 def get_data(id):
     ''' parameters = i=izincode&d=date as string
         returns = cleaned string of source code '''
