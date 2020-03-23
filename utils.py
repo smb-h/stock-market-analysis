@@ -22,7 +22,7 @@ def ready_symbols(rows):
     return splitted_row
 
 # Download csv and return rows
-def get_csv_rows(url,name):
+def get_csv_rows(url, name):
     ''' 
         parameters = url of the csv file to download
         returns = a list of csv file rows 
@@ -50,10 +50,12 @@ def get_csv_rows(url,name):
             rows = file.split(';')
             return rows
 
-
-def ready_id(rows,i):
-    ''' parameters = a list of rows gotten from csv file, i as string
-        returns = a list of rows that are ready to be inserted to db i_d table '''
+# Reformat data
+def ready_id(rows, i):
+    ''' 
+        parameters = a list of rows gotten from csv file, i as string
+        returns = a list of rows that are ready to be inserted to db i_d table 
+    '''
     new_rows = list()
     for row in rows:
         items = row.split(',')
@@ -63,7 +65,7 @@ def ready_id(rows,i):
     return new_rows            
 
 
-def check_tables(db,table_name):
+def check_tables(db, table_name):
     ''' parameters = db connection object, table name as string
         returns = True if table doesnt exist in db '''
     tables = list(db.get_tables())
