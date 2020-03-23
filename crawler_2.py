@@ -12,14 +12,14 @@ import datetime
 # Days
 days = int(input("Enter the number of desired past days for retrieving data: "))
 # Symbols
-symbols = ["43362635835198978","778253364357513","20865316761157979","44891482026867833"]
+symbols = ["43362635835198978","778253364357513","20865316761157979"]
 # Symbols csv
 market = 'http://www.tsetmc.com/tsev2/data/MarketWatchInit.aspx?h=0&r=0' 
 # History
 inst_calendar = 'http://www.tsetmc.com/tsev2/data/InstCalendar.aspx?i='
 
 market_rows = get_csv_rows(market, 'MarketWatchInit.csv')
-symbols_reformated = ready_symbols(market_rows)
+symbols_reformatted = ready_symbols(market_rows)
 
 # DB client
 client = pymongo.MongoClient('localhost', 27017)
@@ -77,63 +77,63 @@ result = coll_symbols.create_index([('symbol_code', pymongo.ASCENDING)], unique=
 '''
 
 # insert data into collection
-for i in range(len(symbols_reformated)):
+for i in range(len(symbols_reformatted)):
     # Update if exists
-    symbol_code = symbols_reformated[i][0]
-    # print(symbols_reformated[i][1])
+    symbol_code = symbols_reformatted[i][0]
+    # print(symbols_reformatted[i][1])
     query = { "symbol_code": symbol_code }
     new_values = { "$set": {
-        'izin_code': symbols_reformated[i][1],
-        'brief_name': symbols_reformated[i][2],
-        'complete_name': symbols_reformated[i][3],
-        'latest_trans_time': symbols_reformated[i][4],
-        'first_price': symbols_reformated[i][5],
-        'latest_price': symbols_reformated[i][6],
-        'last_trans': symbols_reformated[i][7],
-        'trans_num': symbols_reformated[i][8],
-        'trans_turnovers': symbols_reformated[i][9],
-        'trans_value': symbols_reformated[i][10],
-        'lowest': symbols_reformated[i][11],
-        'highest': symbols_reformated[i][12],
-        'yesterday_price': symbols_reformated[i][13],
-        'Eps': symbols_reformated[i][14],
-        'basis_turnovers': symbols_reformated[i][15],
-        'col17': symbols_reformated[i][16],
-        'col18': symbols_reformated[i][17],
-        'gp_code': symbols_reformated[i][18],
-        'allowed_highestprice': symbols_reformated[i][19],
-        'allowed_lowestprice': symbols_reformated[i][20],
-        'all_trans_nums': symbols_reformated[i][21],
-        'col23': symbols_reformated[i][22],
+        'izin_code': symbols_reformatted[i][1],
+        'brief_name': symbols_reformatted[i][2],
+        'complete_name': symbols_reformatted[i][3],
+        'latest_trans_time': symbols_reformatted[i][4],
+        'first_price': symbols_reformatted[i][5],
+        'latest_price': symbols_reformatted[i][6],
+        'last_trans': symbols_reformatted[i][7],
+        'trans_num': symbols_reformatted[i][8],
+        'trans_turnovers': symbols_reformatted[i][9],
+        'trans_value': symbols_reformatted[i][10],
+        'lowest': symbols_reformatted[i][11],
+        'highest': symbols_reformatted[i][12],
+        'yesterday_price': symbols_reformatted[i][13],
+        'Eps': symbols_reformatted[i][14],
+        'basis_turnovers': symbols_reformatted[i][15],
+        'col17': symbols_reformatted[i][16],
+        'col18': symbols_reformatted[i][17],
+        'gp_code': symbols_reformatted[i][18],
+        'allowed_highestprice': symbols_reformatted[i][19],
+        'allowed_lowestprice': symbols_reformatted[i][20],
+        'all_trans_nums': symbols_reformatted[i][21],
+        'col23': symbols_reformatted[i][22],
     }}
     modified = coll_symbols.update_one(query, new_values)
 
     # Insert
     if modified.matched_count == 0:
         data = {
-            'symbol_code': symbols_reformated[i][0],
-            'izin_code': symbols_reformated[i][1],
-            'brief_name': symbols_reformated[i][2],
-            'complete_name': symbols_reformated[i][3],
-            'latest_trans_time': symbols_reformated[i][4],
-            'first_price': symbols_reformated[i][5],
-            'latest_price': symbols_reformated[i][6],
-            'last_trans': symbols_reformated[i][7],
-            'trans_num': symbols_reformated[i][8],
-            'trans_turnovers': symbols_reformated[i][9],
-            'trans_value': symbols_reformated[i][10],
-            'lowest': symbols_reformated[i][11],
-            'highest': symbols_reformated[i][12],
-            'yesterday_price': symbols_reformated[i][13],
-            'Eps': symbols_reformated[i][14],
-            'basis_turnovers': symbols_reformated[i][15],
-            'col17': symbols_reformated[i][16],
-            'col18': symbols_reformated[i][17],
-            'gp_code': symbols_reformated[i][18],
-            'allowed_highestprice': symbols_reformated[i][19],
-            'allowed_lowestprice': symbols_reformated[i][20],
-            'all_trans_nums': symbols_reformated[i][21],
-            'col23': symbols_reformated[i][22],
+            'symbol_code': symbols_reformatted[i][0],
+            'izin_code': symbols_reformatted[i][1],
+            'brief_name': symbols_reformatted[i][2],
+            'complete_name': symbols_reformatted[i][3],
+            'latest_trans_time': symbols_reformatted[i][4],
+            'first_price': symbols_reformatted[i][5],
+            'latest_price': symbols_reformatted[i][6],
+            'last_trans': symbols_reformatted[i][7],
+            'trans_num': symbols_reformatted[i][8],
+            'trans_turnovers': symbols_reformatted[i][9],
+            'trans_value': symbols_reformatted[i][10],
+            'lowest': symbols_reformatted[i][11],
+            'highest': symbols_reformatted[i][12],
+            'yesterday_price': symbols_reformatted[i][13],
+            'Eps': symbols_reformatted[i][14],
+            'basis_turnovers': symbols_reformatted[i][15],
+            'col17': symbols_reformatted[i][16],
+            'col18': symbols_reformatted[i][17],
+            'gp_code': symbols_reformatted[i][18],
+            'allowed_highestprice': symbols_reformatted[i][19],
+            'allowed_lowestprice': symbols_reformatted[i][20],
+            'all_trans_nums': symbols_reformatted[i][21],
+            'col23': symbols_reformatted[i][22],
         }
         rs = coll_symbols.insert_one(data)
 
@@ -145,33 +145,60 @@ for i in range(len(symbols_reformated)):
 # print(df_coll_symbols)
 
 
-# with open("symbols-date.csv") as file:
-        # header_name = symbols_reformated[0]
-#      data = { 
-#         'symbol': [header_name[0]], # نماد 
-#         'jalali_date': [header_name[1]], # کد آیذین
-#         'gregorian_date': [header_name[2]], # نام کوتاه
-#         'complete_name': [header_name[3]], # نام کامل
-#         'latest_trans_time': [header_name[4]], # زمان آخرین معامله
-#         'first_price': [header_name[5]], # اولین قیمت
-#         'latest_price': [header_name[6]], # آخرین قیمت
-#         'last_trans': [header_name[7]], # آخرین معامله
-#         'trans_num': [header_name[8]], # تعداد معاملات
-#         'trans_turnovers': [header_name[9]], #حجم معاملات
-#         'trans_value': [header_name[10]], # ارزش معاملات
-#         'lowest': [header_name[11]], # بازه‌ی روز
-#         'highest': [header_name[12]], # بازه‌ی روز
-#         'yesterday_price': [header_name[13]], # قیمت دیروز
-#         'Eps': [header_name[14]], # (درآمد هر سهم (حاصل تقسیم کل درآمد بر تعداد سهم
-#         'basis_turnovers': [header_name[15]], # حجم مبنا
-#         'col17': [header_name[16]],
-#         'col18': [header_name[17]],
-#         'gp_code': [header_name[18]],
-#         'allowed_highestprice': [header_name[19]], # بالاترین قیمت مجاز
-#         'allowed_lowestprice': [header_name[20]], # پائین ترین قیمت مجاز
-#         'all_trans_nums': [header_name[21]], # تعداد سهام
-#         'col23': [header_name[22]],
-#     }
+'''
+    کد نماد
+    symbol_code
+    تاریخ جلالی
+    jalali_date
+    تاریخ میلادی
+    gregorian_date
+    آخرین قیمت
+    last_price
+    حجم معاملات
+    trans_turnovers
+    نشان میدهد که اطلاعات برای ۴ جدول دیگر در آن تاریخ خاص گرفته شده است یا خیر
+    is_retrieved
+'''
+
+# Transactions Colletion
+coll_transactions = db.transactions
+# coll_transactions.drop()
+transaction_index = 0
+for i in symbols:
+    inst = inst_calendar + i
+    raw_rows = get_csv_rows(inst, 'InstCalendar.csv')
+    reformatted_rows = ready_id(raw_rows, i)
+    for row in reformatted_rows:
+        gregorian_date  = row[2]
+        gregorian_date = gregorian_date[:4] + "-" + gregorian_date[4:6] + "-" + gregorian_date[6:]
+        data = {
+            '_id': transaction_index, 
+            'symbol_code': row[0],
+            'jalali_date': row[1],
+            'gregorian_date': gregorian_date,
+            'last_price': row[3],
+            'trans_turnovers': row[4],
+            'is_retrieved': row[5],
+        }
+        query = {'symbol_code': row[0]}
+        result = list(coll_transactions.find(query).sort("_id", -1)) #descending
+        new_id = coll_transactions.count_documents({})
+        # check last record of symbol in db
+        if len(result) > 0:
+            last_saved_transaction = result[0]
+            last_saved_transaction_date = datetime.datetime.strptime((last_saved_transaction.get("gregorian_date", False)), "%Y-%m-%d").date()
+            current_item_date = datetime.datetime.strptime(gregorian_date, "%Y-%m-%d").date()
+            # add data based on date if its newer then last saved record
+            if (last_saved_transaction_date > current_item_date) :
+                data["_id"] = new_id
+                rs = coll_transactions.insert_one(data)
+        # if symbol data wasnt in db
+        else:
+            data["_id"] = new_id
+            rs = coll_transactions.insert_one(data)
+
+
+        transaction_index += 1
 
 
 
