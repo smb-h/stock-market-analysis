@@ -6,13 +6,15 @@ import pprint
 from bson.objectid import ObjectId
 from bson.son import SON
 from bson.code import Code
-import datetime
+import datetime, time
+import re
 
 
+start = time.time()
 # Days
 days = int(input("Enter the number of desired past days for retrieving data: "))
 # Symbols
-symbols = ["43362635835198978","778253364357513","20865316761157979"]
+symbols = ["43362635835198978"]#,"778253364357513","20865316761157979"]
 # Symbols csv
 market = 'http://www.tsetmc.com/tsev2/data/MarketWatchInit.aspx?h=0&r=0' 
 # History
@@ -203,11 +205,57 @@ for i in symbols:
 # Bestlimitdata Collection
 coll_bestlimitdata = db.bestlimitdata
 
-
 for i in symbols:
     query = {'symbol_code': i}
-    result = list(coll_transactions.find(query, {"_id": 0, "symbol_code": 1, "jalali_date": 1, "is_retrieved": 1 }).sort("_id", -1))
+    result = list(coll_transactions.find(query, {"_id": 0, "symbol_code": 1, "gregorian_date": 1, "is_retrieved": 1 }).sort("_id", -1))
+
     for item in result[:days]:
-        print(item)
+
+        symbol_code = item.get("symbol_code")
+        gregorian_date = item.get("gregorian_date").replace("-", "")
+        is_retrieved = item.get("is_retrieved")
+        soup = get_data('i=' + symbol_code + '&d=' + gregorian_date)
+        
+        # for bestlimitdata collection
+        if (is_retrieved ==  0):
+        
+            best_limit_data_tags = re.findall(r'BestLimitData=(.+]);', soup)
+            best_limit_data_rows = eval(best_limit_data_tags[0])
+
+            for row in best_limit_data_rows:
+
+                row[0] = str(row[0])
+
+                if len(row[0]) < 6:
+                    row[0] = row[0][0] + ':' + row[0][2:4] + ':' + row[0][4:]
+                else:
+                    row[0] = row[0][:2] + ':' + row[0][2:4] + ':' + row[0][4:]
+
+                data = {
+                    'symbol_code': symbol_code, 
+                    'gregorian_data': gregorian_date,
+                    'time': row[0],
+                    'row_number': row[1],
+                    'buying_num': row[2],
+                    'buying_turnover': row[3],
+                    'buying_price': row[4],
+                    'selling_price': row[5],
+                    'selling_turnover': row[6],
+                    'selling_num': row[7],
+                }
+
+                rs = coll_bestlimitdata.insert_one(data)
+
+            query = {"symbol_code": symbol_code, "gregorian_date": gregorian_date}
+            new_values = { "$set": {
+                'is_retrieved': 1,
+            }}
+
+            modified = coll_transactions.update_one(query, new_values)
 
 
+
+
+end = time.time()
+
+print("time elapsed:", end-start)

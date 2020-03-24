@@ -145,7 +145,8 @@ for i in the_4_i:
         working_i = i_and_date.i
         date = i_and_date.m_date
         flag = i_and_date.flag
-        soup = get_data('i=' + working_i + '&d=' + date)    # getting source code
+        soup = get_data('i=' + working_i + '&d=' + date)
+        # getting source code
         if flag == "0":
             print("Saving data...")
             # getting tags if weren't gotten before
