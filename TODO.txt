@@ -1,0 +1,11 @@
+
+
+- get_csv_rows in utils try except dar biad
+
+- to ready_symbols chera 15 ta '' add mikonim
+
+- to table bestlimit people num hamun selling nume
+
+- algorithm update transaction taqir bedim hamachi check nakone
+
+- + timelaps

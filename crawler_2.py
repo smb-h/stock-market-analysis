@@ -161,7 +161,7 @@ for i in range(len(symbols_reformatted)):
 '''
 
 # Transactions Colletion
-coll_transactions = db.transactions
+coll_transactions = db.trading_days
 # coll_transactions.drop()
 transaction_index = 0
 for i in symbols:
@@ -189,7 +189,7 @@ for i in symbols:
             last_saved_transaction_date = datetime.datetime.strptime((last_saved_transaction.get("gregorian_date", False)), "%Y-%m-%d").date()
             current_item_date = datetime.datetime.strptime(gregorian_date, "%Y-%m-%d").date()
             # add data based on date if its newer then last saved record
-            if (last_saved_transaction_date > current_item_date) :
+            if (last_saved_transaction_date < current_item_date) :
                 data["_id"] = new_id
                 rs = coll_transactions.insert_one(data)
         # if symbol data wasnt in db
@@ -200,5 +200,14 @@ for i in symbols:
 
         transaction_index += 1
 
+# Bestlimitdata Collection
+coll_bestlimitdata = db.bestlimitdata
+
+
+for i in symbols:
+    query = {'symbol_code': i}
+    result = list(coll_transactions.find(query, {"_id": 0, "symbol_code": 1, "jalali_date": 1, "is_retrieved": 1 }).sort("_id", -1))
+    for item in result[:days]:
+        print(item)
 
 

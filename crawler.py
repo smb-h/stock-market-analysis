@@ -139,6 +139,7 @@ else:
 
 for i in the_4_i:
     i_date = i_d.select(i_d.i,i_d.m_date,i_d.flag).where(i_d.i == i)
+    
     for i_and_date in i_date[-num : ]:      # loop through desired days
         print("Retrieving data...")
         working_i = i_and_date.i
