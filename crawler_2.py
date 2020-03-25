@@ -1,20 +1,21 @@
 from utils import (ready_symbols, get_csv_rows, ready_id, check_tables, get_data)
 import pandas as pd
-import pymongo 
+import pymongo
 from pymongo.errors import BulkWriteError
-import pprint
 from bson.objectid import ObjectId
 from bson.son import SON
 from bson.code import Code
 import datetime, time
+import pprint
 import re
+import json
 
 
 start = time.time()
 # Days
 days = int(input("Enter the number of desired past days for retrieving data: "))
 # Symbols
-symbols = ["43362635835198978"]#,"778253364357513","20865316761157979"]
+symbols = ["43362635835198978", "778253364357513", "20865316761157979"]
 # Symbols csv
 market = 'http://www.tsetmc.com/tsev2/data/MarketWatchInit.aspx?h=0&r=0' 
 # History
@@ -166,11 +167,14 @@ for i in range(len(symbols_reformatted)):
 coll_transactions = db.trading_days
 # coll_transactions.drop()
 transaction_index = 0
+
 for i in symbols:
     inst = inst_calendar + i
     raw_rows = get_csv_rows(inst, 'InstCalendar.csv')
     reformatted_rows = ready_id(raw_rows, i)
-    for row in reformatted_rows:
+
+    # rows are reversed in order to add rows from the biggest date to the latest saved date in combinition with else*.
+    for row in reformatted_rows[ : :-1]:
         gregorian_date  = row[2]
         gregorian_date = gregorian_date[:4] + "-" + gregorian_date[4:6] + "-" + gregorian_date[6:]
         data = {
@@ -185,15 +189,23 @@ for i in symbols:
         query = {'symbol_code': row[0]}
         result = list(coll_transactions.find(query).sort("_id", -1)) #descending
         new_id = coll_transactions.count_documents({})
+
         # check last record of symbol in db
-        if len(result) > 0:
+        if (result):
             last_saved_transaction = result[0]
-            last_saved_transaction_date = datetime.datetime.strptime((last_saved_transaction.get("gregorian_date", False)), "%Y-%m-%d").date()
+            current_date = last_saved_transaction.get("gregorian_date", False)
+            last_saved_transaction_date = datetime.datetime.strptime(current_date, "%Y-%m-%d").date()
             current_item_date = datetime.datetime.strptime(gregorian_date, "%Y-%m-%d").date()
-            # add data based on date if its newer then last saved record
-            if (last_saved_transaction_date < current_item_date) :
+
+            # add data based on date if its newer than last saved record
+            if (last_saved_transaction_date < current_item_date):
                 data["_id"] = new_id
                 rs = coll_transactions.insert_one(data)
+
+            # *else mentioned in the top, for ending the loop after reaching the first date which is smaller than the latest saved date.
+            else:
+                break
+
         # if symbol data wasnt in db
         else:
             data["_id"] = new_id
@@ -215,7 +227,11 @@ for i in symbols:
         gregorian_date = item.get("gregorian_date").replace("-", "")
         is_retrieved = item.get("is_retrieved")
         soup = get_data('i=' + symbol_code + '&d=' + gregorian_date)
-        
+
+        # gregorian_date with dash
+        gregorian_date_ = item.get("gregorian_date")
+
+
         # for bestlimitdata collection
         if (is_retrieved ==  0):
         
@@ -233,7 +249,7 @@ for i in symbols:
 
                 data = {
                     'symbol_code': symbol_code, 
-                    'gregorian_data': gregorian_date,
+                    'gregorian_data': gregorian_date_,
                     'time': row[0],
                     'row_number': row[1],
                     'buying_num': row[2],
@@ -246,7 +262,7 @@ for i in symbols:
 
                 rs = coll_bestlimitdata.insert_one(data)
 
-            query = {"symbol_code": symbol_code, "gregorian_date": gregorian_date}
+            query = {"symbol_code": symbol_code, "gregorian_date": gregorian_date_}
             new_values = { "$set": {
                 'is_retrieved': 1,
             }}
@@ -254,7 +270,15 @@ for i in symbols:
             modified = coll_transactions.update_one(query, new_values)
 
 
-
+# write database as json 
+#for collection in [coll_symbols, coll_transactions, coll_bestlimitdata]:
+#    cursor = collection.find({}, {"_id":0})
+#    file = open("{}.json".format(collection.name), "w")
+#    file.write('[')
+#    for document in cursor:
+#        file.write(json.dumps(document, sort_keys=True, indent=4))
+#        file.write(',')
+#    file.write(']')
 
 end = time.time()
 
