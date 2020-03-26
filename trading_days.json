@@ -1,0 +1,22 @@
+[{
+    "gregorian_date": "2020-03-25",
+    "is_retrieved": 1,
+    "jalali_date": "1399/1/6",
+    "last_price": "11202.00",
+    "symbol_code": "43362635835198978",
+    "trans_turnovers": "7506836"
+},{
+    "gregorian_date": "2020-03-25",
+    "is_retrieved": 1,
+    "jalali_date": "1399/1/6",
+    "last_price": "8974.00",
+    "symbol_code": "778253364357513",
+    "trans_turnovers": "205902673"
+},{
+    "gregorian_date": "2020-03-25",
+    "is_retrieved": 1,
+    "jalali_date": "1399/1/6",
+    "last_price": "6444.00",
+    "symbol_code": "20865316761157979",
+    "trans_turnovers": "55806143"
+},]
