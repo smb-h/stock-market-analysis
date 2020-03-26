@@ -1,0 +1,557 @@
+Return-Path: <zeinabsaeedi78@gmail.com>
+Received: from [192.168.43.159] ([5.115.169.25])
+        by smtp.gmail.com with ESMTPSA id y13sm7506028wrw.85.2019.02.02.09.23.15
+        for <mirkamali.sj@gmail.com>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 02 Feb 2019 09:23:16 -0800 (PST)
+From: Zeinab Saeedi <zeinabsaeedi78@gmail.com>
+Content-Type: multipart/alternative;
+	boundary="Apple-Mail=_33042F0B-9B16-4688-B645-C2EBB1C45717"
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: =?utf-8?B?2b7YsdmI2pjZhyDZhtmH2KfbjNuM?=
+Message-Id: <98B3DD60-FFB6-4E49-B077-E81E8B267CA2@gmail.com>
+Date: Sat, 2 Feb 2019 20:53:12 +0330
+To: Sayed Jamal Mirkamali <mirkamali.sj@gmail.com>
+X-Mailer: Apple Mail (2.3445.102.3)
+
+
+--Apple-Mail=_33042F0B-9B16-4688-B645-C2EBB1C45717
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
+
+=D8=B3=D9=84=D8=A7=D9=85=20
+=D8=A7=D8=B3=D8=AA=D8=A7=D8=AF =D8=A7=DB=8C=D9=86=D9=87=D8=A7 =D9=81=D8=A7=
+=DB=8C=D9=84 =D9=87=D8=A7=DB=8C =D9=BE=D8=A7=DB=8C=D8=A7=D9=86=DB=8C =
+=D9=87=D8=B3=D8=AA=D9=86
+
+=D8=A7=DB=8C=D9=86 =D9=84=DB=8C=D9=86=DA=A9 =D9=87=D8=A7 =D9=87=D9=85 =
+=D8=A8=D8=B1=D8=A7=DB=8C =D9=81=DB=8C=D9=84=D9=85 =D9=87=D8=A7=D8=B3=D8=AA=
+ =D8=A8=D9=87 =D8=AF=D9=84=DB=8C=D9=84 =D8=AD=D8=AC=D9=85 =D8=AE=DB=8C=D9=84=
+=DB=8C =D8=A8=D8=A7=D9=84=D8=A7 =D9=85=D8=AC=D8=A8=D9=88=D8=B1 =D8=B4=D8=AF=
+=D9=85 =DA=A9=DB=8C=D9=81=DB=8C=D8=AA =D8=B1=D9=88 =D8=A8=DB=8C=D8=A7=D8=B1=
+=D9=85 =D8=A8=D8=A7=D9=84=D8=A7 =D8=AE=DB=8C=D9=84=DB=8C =D8=B4=D8=B1=D9=85=
+=D9=86=D8=AF=D9=85 :(
+
+https://drive.google.com/open?id=3D1O0zHLI9YlN-GlAEObdbGwIXEUXxfAiT7
+
+https://drive.google.com/open?id=3D1r8_YQmg3MRfHLFB4f8oZRx4nw2HVfFsh =
+<https://drive.google.com/open?id=3D1r8_YQmg3MRfHLFB4f8oZRx4nw2HVfFsh>
+
+
+--Apple-Mail=_33042F0B-9B16-4688-B645-C2EBB1C45717
+Content-Type: multipart/mixed;
+	boundary="Apple-Mail=_CB79CD90-6600-42D5-BD70-F938713C609A"
+
+
+--Apple-Mail=_CB79CD90-6600-42D5-BD70-F938713C609A
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html;
+	charset=utf-8
+
+<html><head><meta http-equiv=3D"Content-Type" content=3D"text/html; =
+charset=3Dutf-8"></head><body style=3D"word-wrap: break-word; =
+-webkit-nbsp-mode: space; line-break: after-white-space; direction: =
+rtl;" class=3D"">=D8=B3=D9=84=D8=A7=D9=85&nbsp;<div class=3D"">=D8=A7=D8=B3=
+=D8=AA=D8=A7=D8=AF =D8=A7=DB=8C=D9=86=D9=87=D8=A7 =D9=81=D8=A7=DB=8C=D9=84=
+ =D9=87=D8=A7=DB=8C =D9=BE=D8=A7=DB=8C=D8=A7=D9=86=DB=8C =
+=D9=87=D8=B3=D8=AA=D9=86</div><div class=3D""></div></body></html>=
+
+--Apple-Mail=_CB79CD90-6600-42D5-BD70-F938713C609A
+Content-Disposition: attachment;
+	filename=crawler.py
+Content-Type: text/x-python-script;
+	x-unix-mode=0644;
+	name="crawler.py"
+Content-Transfer-Encoding: 7bit
+
+from peewee import *
+from functions import *
+
+
+db = SqliteDatabase('stocks.db')
+class BaseModel(Model): 
+    class Meta:
+        database = db
+
+class plotting(BaseModel):
+    i = CharField()
+    m_date = CharField()
+    opening_price = FloatField()
+    closing_price = FloatField()
+    
+class Signs(BaseModel):
+    i = CharField()
+    izin_code = CharField()
+    brief_name = CharField()
+    complete_name = CharField()
+    col5 = CharField()
+    initial = CharField()
+    latest = CharField()
+    last_trans = CharField()
+    trans_num = CharField()
+    trans_turnovers = CharField()
+    trans_values = CharField()
+    lowest = CharField()
+    highest = CharField()
+    yesterday = CharField()
+    Eps = CharField()
+    basis_turnovers = CharField()
+    col17 = CharField()
+    col18 = CharField()
+    gp_code = CharField()
+    allowed_hp = CharField()
+    allowed_lp = CharField()
+    all_trans_nums = CharField()
+    col23 = CharField()
+
+class i_d(BaseModel):
+    i = CharField()
+    s_date = DateField()
+    m_date = CharField()
+    last_price = CharField()
+    trans_turnovers = CharField()
+    flag = CharField()
+
+class BestLimitData(BaseModel):
+    i = CharField()
+    m_date = CharField()
+    time  = TimeField()
+    row = CharField()
+    buying_num = CharField()
+    buying_turnover = CharField()
+    buying_price = CharField()
+    selling_price = CharField()
+    selling_turnover = CharField()
+    people_num = CharField()
+
+class ClosingPriceData(BaseModel):
+        i = CharField()
+        m_date = CharField()
+        date = DateTimeField()
+        last_trans = CharField() 
+        latest_price = CharField()
+        initial_price = CharField()
+        yesterday_price = CharField()
+        highest_price = CharField()
+        lowest_price = CharField()
+        trans_num = CharField()
+        trans_turnovers = CharField()
+        trans_values = CharField()
+
+class IntraTradeData(BaseModel):
+    i = CharField()
+    m_date = CharField()
+    trans_num = CharField()
+    time = TimeField() 
+    turnover = CharField()
+    price = CharField()
+
+class IntraDayPriceData(BaseModel):
+    number = IntegerField(primary_key=True)
+    i = CharField()
+    m_date = CharField()
+    time = TimeField() 
+    initial_price = CharField() 
+    lowest_price = CharField()
+    highest_price = CharField()
+    latest_price = CharField()
+    Turnover = CharField()
+    
+
+db.connect()
+num = int(input("Enter the number of desired past days for retrieving data:"))
+the_4_i = ["43362635835198978","778253364357513","20865316761157979","44891482026867833"]
+market = 'http://www.tsetmc.com/tsev2/data/MarketWatchInit.aspx?h=0&r=0'
+instcalendar = 'http://www.tsetmc.com/tsev2/data/InstCalendar.aspx?i='
+m_rows = get_csv(market,'MarketWatchInit.csv')
+splitted = ready_signs(m_rows)
+
+# checking if signs table exists, if not it will be created
+if check_tables(db,'signs'):
+    db.create_tables([Signs])
+    for item in splitted:
+        Signs.create(i = item[0],izin_code = item[1],brief_name = item [2],complete_name = item[3],col5 = item[4],\
+            initial = item[5],latest = item[6],last_trans = item[7],trans_num = item[8],trans_turnovers = item[9],\
+            trans_values = item[10],lowest = item[11],highest = item[12],yesterday = item[13],Eps = item[14],\
+            basis_turnovers = item[15],col17 = item[16],col18 = item[17],gp_code = item[18],allowed_hp = item[19],\
+            allowed_lp = item[20],all_trans_nums = item[21],col23 = item[22])
+else:
+    rows = Signs.select(Signs.id)
+    for item,row in zip(splitted,rows):
+        Signs.update(i = item[0],izin_code = item[1],brief_name = item [2],complete_name = item[3],col5 = item[4],\
+            initial = item[5],latest = item[6],last_trans = item[7],trans_num = item[8],trans_turnovers = item[9],\
+            trans_values = item[10],lowest = item[11],highest = item[12],yesterday = item[13],Eps = item[14],\
+            basis_turnovers = item[15],col17 = item[16],col18 = item[17],gp_code = item[18],allowed_hp = item[19],\
+            allowed_lp = item[20],all_trans_nums = item[21],col23 = item[22]).where(Signs.id == row.id)
+
+if check_tables(db,'i_d'):
+    db.create_tables([i_d])
+    for i in the_4_i:
+        inst = instcalendar + i
+        i_rows = get_csv(inst,'InstCalendar.csv')
+        ready_rows = ready_id(i_rows,i)
+        for row in ready_rows:
+            i_d.create(i = row[0],s_date = row[1],m_date = row[2],last_price = row[3],trans_turnovers = row[4],\
+            flag = row[5])
+else:
+    rows = i_d.select(i_d.id)
+    for i in the_4_i:
+        inst = instcalendar + i
+        i_rows = get_csv(inst,'InstCalendar.csv')
+        ready_rows = ready_id(i_rows,i)
+        for ready_row,row in zip(ready_rows,rows):
+            i_d.update(i = ready_row[0],s_date = ready_row[1],m_date = ready_row[2],last_price = ready_row[3],\
+            trans_turnovers = ready_row[4],flag = ready_row[5]).where(i_d.id == row.id)
+
+for i in the_4_i:
+    i_date = i_d.select(i_d.i,i_d.m_date,i_d.flag).where(i_d.i == i)
+    for i_and_date in i_date[-num : ]:      # loop through desired days
+        print("Retrieving data...")
+        working_i = i_and_date.i
+        date = i_and_date.m_date
+        flag = i_and_date.flag
+        soup = get_data('i=' + working_i + '&d=' + date)    # getting source code
+        if flag == "0":
+            print("Saving data...")
+            # getting tags if weren't gotten before
+            if check_tables(db,"ClosingPriceData"):
+                db.create_tables([ClosingPriceData])
+            ClosingPriceData_tag = re.findall(r'ClosingPriceData=(.+);',soup)
+            C_rows = eval(ClosingPriceData_tag[0])
+            db.create_tables([ClosingPriceData])
+            for row in C_rows:
+                del row[1]
+                del row[-2:]
+                ClosingPriceData.create(i = working_i,m_date = date,date = row[0],last_trans = row[1],\
+                latest_price = row[2],initial_price = row[3],yesterday_price = row[4],highest_price = row[5],\
+                lowest_price = row[6],trans_num = row[7],trans_turnovers = row[8],trans_values = row[9])
+            
+            if check_tables(db,"IntraDayPriceData"):
+                db.create_tables([IntraDayPriceData])
+            IntraDayPriceData_tag = re.findall(r'IntraDayPriceData=(.+);',soup)
+            Intraday_rows = eval(IntraDayPriceData_tag[0])
+            for row in Intraday_rows:
+                IntraDayPriceData.create(i = working_i,m_date = date,time = row[0],initial_price = row[1],\
+                lowest_price = row[2],highest_price = row[3],latest_price = row[4],Turnover = row[5])
+            
+            if check_tables(db,"IntraTradeData"):
+                db.create_tables([IntraTradeData])
+            IntraTradeData_tag = re.findall(r'IntraTradeData=(.+);',soup)
+            Intratrade_rows = eval(IntraTradeData_tag[0])
+            for row in Intratrade_rows:
+                row = row[:-1]
+                IntraTradeData.create(i = working_i,m_date = date,trans_num = row[0],time = row[1],\
+                turnover = row[2],price = row[3])
+            
+            if check_tables(db,"BestLimitData"):
+                db.create_tables([BestLimitData])
+            BestLimitData_tag = re.findall(r'BestLimitData=(.+]);',soup)
+            Best_rows = eval(BestLimitData_tag[0])
+            for row in Best_rows:
+                row[0] = str(row[0])
+                if len(row[0]) < 6:
+                    row[0] = row[0][0] + ':' + row[0][2:4] + ':' + row[0][4:]
+                else:
+                    row[0] = row[0][:2] + ':' + row[0][2:4] + ':' + row[0][4:]
+                BestLimitData.create(i = working_i,m_date = date,time = row[0],row = row[1],\
+                buying_num = row[2],buying_turnover = row[3],buying_price = row[4],selling_price = row[5],\
+                selling_turnover = row[6],people_num = row[7])
+            
+            if check_tables(db,"plotting"):
+                db.create_tables([plotting])      
+            i_date = IntraDayPriceData.select(IntraDayPriceData.m_date).where(IntraDayPriceData.i == i)
+            opening = IntraDayPriceData.select(IntraDayPriceData.initial_price).where(IntraDayPriceData.i == i, \
+            IntraDayPriceData.m_date == date).limit(1)
+            closing = IntraDayPriceData.select(IntraDayPriceData.latest_price).where(IntraDayPriceData.i == i,\
+            IntraDayPriceData.m_date == date).order_by(IntraDayPriceData.number.desc()).limit(1)
+            try:
+                plotting.create(i = i,m_date = date,opening_price = opening[0].initial_price,closing_price = closing[0].latest_price)
+            except:
+                plotting.create(i = i,m_date = date,opening_price = 0,closing_price = 0)
+        i_d.update(flag = "1" ).where((i_d.i == working_i) & (i_d.m_date == date)).execute()   
+
+print('Done =)')
+--Apple-Mail=_CB79CD90-6600-42D5-BD70-F938713C609A
+Content-Transfer-Encoding: 7bit
+Content-Type: text/html;
+	charset=us-ascii
+
+<html><body style="word-wrap: break-word; -webkit-nbsp-mode: space; line-break: after-white-space; direction: rtl;"><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii"></head><div></div></body></html>
+--Apple-Mail=_CB79CD90-6600-42D5-BD70-F938713C609A
+Content-Disposition: attachment;
+	filename=plot.ipynb
+Content-Type: application/octet-stream;
+	x-unix-mode=0644;
+	name="plot.ipynb"
+Content-Transfer-Encoding: quoted-printable
+
+{=0A=20"cells":=20[=0A=20=20{=0A=20=20=20"cell_type":=20"code",=0A=20=20=20=
+"execution_count":=201,=0A=20=20=20"metadata":=20{},=0A=20=20=20=
+"outputs":=20[],=0A=20=20=20"source":=20[=0A=20=20=20=20"from=20=
+__future__=20import=20print_function\n",=0A=20=20=20=20"import=20=
+sqlite3\n",=0A=20=20=20=20"import=20numpy=20as=20np\n",=0A=20=20=20=20=
+"import=20matplotlib.pyplot=20as=20plt\n",=0A=20=20=20=20"from=20=
+matplotlib.collections=20import=20LineCollection\n",=0A=20=20=20=20=
+"import=20pandas=20as=20pd\n",=0A=20=20=20=20"from=20sklearn=20import=20=
+cluster,=20covariance,=20manifold"=0A=20=20=20]=0A=20=20},=0A=20=20{=0A=20=
+=20=20"cell_type":=20"code",=0A=20=20=20"execution_count":=202,=0A=20=20=20=
+"metadata":=20{},=0A=20=20=20"outputs":=20[],=0A=20=20=20"source":=20[=0A=
+=20=20=20=20"conn=20=3D=20sqlite3.connect('stocks.db')\n",=0A=20=20=20=20=
+"cur=20=3D=20conn.cursor()"=0A=20=20=20]=0A=20=20},=0A=20=20{=0A=20=20=20=
+"cell_type":=20"code",=0A=20=20=20"execution_count":=2036,=0A=20=20=20=
+"metadata":=20{},=0A=20=20=20"outputs":=20[=0A=20=20=20=20{=0A=20=20=20=20=
+=20"data":=20{=0A=20=20=20=20=20=20"text/plain":=20[=0A=20=20=20=20=20=20=
+=20"[[('=D9=87=D8=A7=D9=8A=20=D9=88=D8=A8',)],=20[('=D9=88=D8=A8=D9=85=D9=84=
+=D8=AA',)],=20[('=D9=81=D8=A7=D8=B1=D8=A7=D9=83',)],=20=
+[('=D8=AE=D8=B3=D8=A7=D9=BE=D8=A7',)]]"=0A=20=20=20=20=20=20]=0A=20=20=20=
+=20=20},=0A=20=20=20=20=20"execution_count":=2036,=0A=20=20=20=20=20=
+"metadata":=20{},=0A=20=20=20=20=20"output_type":=20"execute_result"=0A=20=
+=20=20=20}=0A=20=20=20],=0A=20=20=20"source":=20[=0A=20=20=20=20"quotes=20=
+=3D=20[]\n",=0A=20=20=20=20"names=20=3D=20[]\n",=0A=20=20=20=20"all_i=20=
+=3D=20=
+[\"43362635835198978\",\"778253364357513\",\"20865316761157979\",\"4489148=
+2026867833\"]\n",=0A=20=20=20=20"for=20i=20in=20all_i:\n",=0A=20=20=20=20=
+"=20=20=20=20df=20=3D=20pd.read_sql_query(\"SELECT=20*=20from=20plotting=20=
+where=20i=20=3D=20%s\"=20%=20i,=20conn)\n",=0A=20=20=20=20"=20=20=20=20=
+quotes.append(df)\n",=0A=20=20=20=20"=20=20=20=20=
+names.append(list(cur.execute(\"Select=20brief_name=20from=20signs=20=
+where=20i=20=3D=20%s=20and=20length(brief_name)=20>=201=20\"=20%=20=
+i)))\n",=0A=20=20=20=20"names"=0A=20=20=20]=0A=20=20},=0A=20=20{=0A=20=20=
+=20"cell_type":=20"code",=0A=20=20=20"execution_count":=204,=0A=20=20=20=
+"metadata":=20{},=0A=20=20=20"outputs":=20[=0A=20=20=20=20{=0A=20=20=20=20=
+=20"data":=20{=0A=20=20=20=20=20=20"text/plain":=20[=0A=20=20=20=20=20=20=
+=20"array([[=20-1.,=20105.,=20-29.],\n",=0A=20=20=20=20=20=20=20"=20=20=20=
+=20=20=20=20[-42.,=20-73.,=20-28.],\n",=0A=20=20=20=20=20=20=20"=20=20=20=
+=20=20=20=20[-28.,=20=20-5.,=20-21.],\n",=0A=20=20=20=20=20=20=20"=20=20=20=
+=20=20=20=20[-10.,=20=20=200.,=20=2013.]])"=0A=20=20=20=20=20=20]=0A=20=20=
+=20=20=20},=0A=20=20=20=20=20"execution_count":=204,=0A=20=20=20=20=20=
+"metadata":=20{},=0A=20=20=20=20=20"output_type":=20"execute_result"=0A=20=
+=20=20=20}=0A=20=20=20],=0A=20=20=20"source":=20[=0A=20=20=20=20=
+"close_prices=20=3D=20np.vstack([df['closing_price']=20for=20df=20in=20=
+quotes])\n",=0A=20=20=20=20"open_prices=20=3D=20=
+np.vstack([df['opening_price']=20for=20df=20in=20quotes])\n",=0A=20=20=20=
+=20"variation=20=3D=20close_prices=20-=20open_prices\n",=0A=20=20=20=20=
+"variation"=0A=20=20=20]=0A=20=20},=0A=20=20{=0A=20=20=20"cell_type":=20=
+"code",=0A=20=20=20"execution_count":=2016,=0A=20=20=20"metadata":=20{},=0A=
+=20=20=20"outputs":=20[=0A=20=20=20=20{=0A=20=20=20=20=20"name":=20=
+"stderr",=0A=20=20=20=20=20"output_type":=20"stream",=0A=20=20=20=20=20=
+"text":=20[=0A=20=20=20=20=20=20=
+"/anaconda3/envs/myenv/lib/python3.7/site-packages/sklearn/covariance/empi=
+rical_covariance_.py:76:=20UserWarning:=20Only=20one=20sample=20=
+available.=20You=20may=20want=20to=20reshape=20your=20data=20array\n",=0A=
+=20=20=20=20=20=20"=20=20warnings.warn(\"Only=20one=20sample=20=
+available.=20\"\n",=0A=20=20=20=20=20=20=
+"/anaconda3/envs/myenv/lib/python3.7/site-packages/sklearn/covariance/empi=
+rical_covariance_.py:76:=20UserWarning:=20Only=20one=20sample=20=
+available.=20You=20may=20want=20to=20reshape=20your=20data=20array\n",=0A=
+=20=20=20=20=20=20"=20=20warnings.warn(\"Only=20one=20sample=20=
+available.=20\"\n",=0A=20=20=20=20=20=20=
+"/anaconda3/envs/myenv/lib/python3.7/site-packages/sklearn/covariance/empi=
+rical_covariance_.py:76:=20UserWarning:=20Only=20one=20sample=20=
+available.=20You=20may=20want=20to=20reshape=20your=20data=20array\n",=0A=
+=20=20=20=20=20=20"=20=20warnings.warn(\"Only=20one=20sample=20=
+available.=20\"\n",=0A=20=20=20=20=20=20=
+"/anaconda3/envs/myenv/lib/python3.7/site-packages/sklearn/covariance/empi=
+rical_covariance_.py:76:=20UserWarning:=20Only=20one=20sample=20=
+available.=20You=20may=20want=20to=20reshape=20your=20data=20array\n",=0A=
+=20=20=20=20=20=20"=20=20warnings.warn(\"Only=20one=20sample=20=
+available.=20\"\n",=0A=20=20=20=20=20=20=
+"/anaconda3/envs/myenv/lib/python3.7/site-packages/sklearn/covariance/empi=
+rical_covariance_.py:76:=20UserWarning:=20Only=20one=20sample=20=
+available.=20You=20may=20want=20to=20reshape=20your=20data=20array\n",=0A=
+=20=20=20=20=20=20"=20=20warnings.warn(\"Only=20one=20sample=20=
+available.=20\"\n",=0A=20=20=20=20=20=20=
+"/anaconda3/envs/myenv/lib/python3.7/site-packages/sklearn/covariance/empi=
+rical_covariance_.py:76:=20UserWarning:=20Only=20one=20sample=20=
+available.=20You=20may=20want=20to=20reshape=20your=20data=20array\n",=0A=
+=20=20=20=20=20=20"=20=20warnings.warn(\"Only=20one=20sample=20=
+available.=20\"\n",=0A=20=20=20=20=20=20=
+"/anaconda3/envs/myenv/lib/python3.7/site-packages/sklearn/covariance/empi=
+rical_covariance_.py:76:=20UserWarning:=20Only=20one=20sample=20=
+available.=20You=20may=20want=20to=20reshape=20your=20data=20array\n",=0A=
+=20=20=20=20=20=20"=20=20warnings.warn(\"Only=20one=20sample=20=
+available.=20\"\n"=0A=20=20=20=20=20]=0A=20=20=20=20},=0A=20=20=20=20{=0A=
+=20=20=20=20=20"data":=20{=0A=20=20=20=20=20=20"text/plain":=20[=0A=20=20=
+=20=20=20=20=20"GraphicalLassoCV(alphas=3D4,=20assume_centered=3DFalse,=20=
+cv=3D3,=20enet_tol=3D0.0001,\n",=0A=20=20=20=20=20=20=20"=20=20=20=20=20=20=
+=20=20=20max_iter=3D100,=20mode=3D'cd',=20n_jobs=3DNone,=20=
+n_refinements=3D4,=20tol=3D0.0001,\n",=0A=20=20=20=20=20=20=20"=20=20=20=20=
+=20=20=20=20=20verbose=3DFalse)"=0A=20=20=20=20=20=20]=0A=20=20=20=20=20=
+},=0A=20=20=20=20=20"execution_count":=2016,=0A=20=20=20=20=20=
+"metadata":=20{},=0A=20=20=20=20=20"output_type":=20"execute_result"=0A=20=
+=20=20=20}=0A=20=20=20],=0A=20=20=20"source":=20[=0A=20=20=20=20=
+"edge_model=20=3D=20covariance.GraphicalLassoCV(cv=3D3)\n",=0A=20=20=20=20=
+"X=20=3D=20variation.copy().T\n",=0A=20=20=20=20"X=20/=3D=20=
+X.std(axis=3D0)\n",=0A=20=20=20=20"edge_model.fit(X)"=0A=20=20=20]=0A=20=20=
+},=0A=20=20{=0A=20=20=20"cell_type":=20"code",=0A=20=20=20=
+"execution_count":=2037,=0A=20=20=20"metadata":=20{},=0A=20=20=20=
+"outputs":=20[=0A=20=20=20=20{=0A=20=20=20=20=20"ename":=20"TypeError",=0A=
+=20=20=20=20=20"evalue":=20"only=20integer=20scalar=20arrays=20can=20be=20=
+converted=20to=20a=20scalar=20index",=0A=20=20=20=20=20"output_type":=20=
+"error",=0A=20=20=20=20=20"traceback":=20[=0A=20=20=20=20=20=20=
+"\u001b[0;31m-------------------------------------------------------------=
+--------------\u001b[0m",=0A=20=20=20=20=20=20=
+"\u001b[0;31mTypeError\u001b[0m=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20Traceback=20=
+(most=20recent=20call=20last)",=0A=20=20=20=20=20=20=
+"\u001b[0;32m<ipython-input-37-d7528f9fcdcd>\u001b[0m=20in=20=
+\u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[1;32m=20=20=20=20=20=20=
+3\u001b[0m=20\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m=20=20=20=20=20=20=
+4\u001b[0m=20\u001b[0;32mfor\u001b[0m=20\u001b[0mi\u001b[0m=20=
+\u001b[0;32min\u001b[0m=20=
+\u001b[0mrange\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mn_labels\u001b[0m=20=
+\u001b[0;34m+\u001b[0m=20=
+\u001b[0;36m1\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0=
+;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m---->=20=
+5\u001b[0;31m=20=20=20=20=20=
+\u001b[0mprint\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m'Cluster=20%i:=20=
+%s'\u001b[0m=20\u001b[0;34m%\u001b[0m=20=
+\u001b[0;34m(\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mi\u001b[0m=20=
+\u001b[0;34m+\u001b[0m=20=
+\u001b[0;36m1\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m,\u001b[0m=20=
+\u001b[0;34m',=20=
+'\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mjoin\u001b[0m\u001b[0;34m(\u001b[=
+0m\u001b[0mnames\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0mlabels\u001b[0m=20=
+\u001b[0;34m=3D=3D\u001b[0m=20=
+\u001b[0mi\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34=
+m)\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0=
+m\u001b[0m\n\u001b[0m",=0A=20=20=20=20=20=20=
+"\u001b[0;31mTypeError\u001b[0m:=20only=20integer=20scalar=20arrays=20=
+can=20be=20converted=20to=20a=20scalar=20index"=0A=20=20=20=20=20]=0A=20=20=
+=20=20}=0A=20=20=20],=0A=20=20=20"source":=20[=0A=20=20=20=20"_,=20=
+labels=20=3D=20cluster.affinity_propagation(edge_model.covariance_)\n",=0A=
+=20=20=20=20"n_labels=20=3D=20labels.max()\n",=0A=20=20=20=20"\n",=0A=20=20=
+=20=20"for=20i=20in=20range(n_labels=20+=201):\n",=0A=20=20=20=20"=20=20=20=
+=20print('Cluster=20%i:=20%s'=20%=20((i=20+=201),=20',=20=
+'.join(names[labels=20=3D=3D=20i])))"=0A=20=20=20]=0A=20=20},=0A=20=20{=0A=
+=20=20=20"cell_type":=20"code",=0A=20=20=20"execution_count":=20null,=0A=20=
+=20=20"metadata":=20{},=0A=20=20=20"outputs":=20[],=0A=20=20=20"source":=20=
+[]=0A=20=20}=0A=20],=0A=20"metadata":=20{=0A=20=20"kernelspec":=20{=0A=20=
+=20=20"display_name":=20"Python=203",=0A=20=20=20"language":=20"python",=0A=
+=20=20=20"name":=20"python3"=0A=20=20},=0A=20=20"language_info":=20{=0A=20=
+=20=20"codemirror_mode":=20{=0A=20=20=20=20"name":=20"ipython",=0A=20=20=20=
+=20"version":=203=0A=20=20=20},=0A=20=20=20"file_extension":=20".py",=0A=20=
+=20=20"mimetype":=20"text/x-python",=0A=20=20=20"name":=20"python",=0A=20=
+=20=20"nbconvert_exporter":=20"python",=0A=20=20=20"pygments_lexer":=20=
+"ipython3",=0A=20=20=20"version":=20"3.7.1"=0A=20=20}=0A=20},=0A=20=
+"nbformat":=204,=0A=20"nbformat_minor":=202=0A}=0A=
+
+--Apple-Mail=_CB79CD90-6600-42D5-BD70-F938713C609A
+Content-Transfer-Encoding: 7bit
+Content-Type: text/html;
+	charset=us-ascii
+
+<html><body style="word-wrap: break-word; -webkit-nbsp-mode: space; line-break: after-white-space; direction: rtl;"><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii"></head><div></div></body></html>
+--Apple-Mail=_CB79CD90-6600-42D5-BD70-F938713C609A
+Content-Disposition: attachment;
+	filename=functions.py
+Content-Type: text/x-python-script;
+	x-unix-mode=0644;
+	name="functions.py"
+Content-Transfer-Encoding: 7bit
+
+from peewee import *
+from bs4 import BeautifulSoup
+import os,requests,re
+
+
+def ready_to_insert(row):
+    splitted_row = row.split(',')
+    if len(splitted_row) == 8:
+        for i in range(15):
+            splitted_row.append('')
+    return splitted_row
+
+def ready_signs(rows):
+    ''' parameters = rows that are gotten from csv file as list
+        returns = a list of rows that are ready to be saved '''
+    splitted_row = list()
+    for items in rows:
+        for row in items:
+            splitted_row.append(ready_to_insert(row))
+    return splitted_row
+
+def get_csv(url,name):
+    ''' parameters = url of the csv file to download
+        returns = a list of csv file rows '''
+    rows = list()
+    try:
+        r = requests.get(url)
+        pwd = os.getcwd()
+        with open (os.path.join(pwd , name), 'wb') as file:
+            file.write(r.content)
+    except:
+        if (not os. path. isfile(name)):
+            print("something went wrong,couldn't download the file...")
+    finally:
+        if name == 'MarketWatchInit.csv':
+            with open(name) as handle:
+                info = handle.read()
+            infos = info.split('@')
+            for item in infos[2:-1]:
+                rows.append(item.split(';'))
+            return rows
+        else:
+            with open ('InstCalendar.csv') as handle:
+                file = handle.read()
+            rows = file.split(';')
+            return rows
+            
+def ready_id(rows,i):
+    ''' parameters = a list of rows gotten from csv file, i as string
+        returns = a list of rows that are ready to be inserted to db i_d table '''
+    new_rows = list()
+    for row in rows:
+        items = row.split(',')
+        row = (i,) + tuple(items) + (0,)
+        if len(row) == 6:
+            new_rows.append(row)
+    return new_rows            
+
+def check_tables(db,table_name):
+    ''' parameters = db connection object, table name as string
+        returns = True if table doesnt exist in db '''
+    tables = list(db.get_tables())
+    if table_name not in tables:
+        return True
+    else:
+        return False
+    
+def get_data(id):
+    ''' parameters = i=izincode&d=date as string
+        returns = cleaned string of source code '''
+    url = 'http://cdn.tsetmc.com/Loader.aspx?ParTree=15131P&' + id
+    page = requests.get(url)
+    soup = str(BeautifulSoup(page.text, 'html.parser'))
+    return soup
+
+
+--Apple-Mail=_CB79CD90-6600-42D5-BD70-F938713C609A
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html;
+	charset=utf-8
+
+<html><head><meta http-equiv=3D"Content-Type" content=3D"text/html; =
+charset=3Dutf-8"></head><body style=3D"word-wrap: break-word; =
+-webkit-nbsp-mode: space; line-break: after-white-space; direction: =
+rtl;" class=3D""><div class=3D""></div><div class=3D"">=D8=A7=DB=8C=D9=86 =
+=D9=84=DB=8C=D9=86=DA=A9 =D9=87=D8=A7 =D9=87=D9=85 =D8=A8=D8=B1=D8=A7=DB=8C=
+ =D9=81=DB=8C=D9=84=D9=85 =D9=87=D8=A7=D8=B3=D8=AA =D8=A8=D9=87 =D8=AF=D9=84=
+=DB=8C=D9=84 =D8=AD=D8=AC=D9=85 =D8=AE=DB=8C=D9=84=DB=8C =D8=A8=D8=A7=D9=84=
+=D8=A7 =D9=85=D8=AC=D8=A8=D9=88=D8=B1 =D8=B4=D8=AF=D9=85 =DA=A9=DB=8C=D9=81=
+=DB=8C=D8=AA =D8=B1=D9=88 =D8=A8=DB=8C=D8=A7=D8=B1=D9=85 =D8=A8=D8=A7=D9=84=
+=D8=A7 =D8=AE=DB=8C=D9=84=DB=8C =D8=B4=D8=B1=D9=85=D9=86=D8=AF=D9=85 =
+:(</div><div class=3D""><br class=3D""></div><div class=3D""><a =
+href=3D"https://drive.google.com/open?id=3D1O0zHLI9YlN-GlAEObdbGwIXEUXxfAi=
+T7" =
+class=3D"">https://drive.google.com/open?id=3D1O0zHLI9YlN-GlAEObdbGwIXEUXx=
+fAiT7</a></div><div class=3D""><br class=3D""></div><div class=3D""><a =
+href=3D"https://drive.google.com/open?id=3D1r8_YQmg3MRfHLFB4f8oZRx4nw2HVfF=
+sh" =
+class=3D"">https://drive.google.com/open?id=3D1r8_YQmg3MRfHLFB4f8oZRx4nw2H=
+VfFsh</a></div><div class=3D""><br class=3D""></div></body></html>=
+
+--Apple-Mail=_CB79CD90-6600-42D5-BD70-F938713C609A--
+
+--Apple-Mail=_33042F0B-9B16-4688-B645-C2EBB1C45717--
