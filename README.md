@@ -1,4 +1,4 @@
-# statistics
+# Stock Market Analysis
 
 crawler and analyzer of <a href="http://www.tsetmc.com">Iran exchange</a>
 
