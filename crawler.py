@@ -1,215 +1,434 @@
-from peewee import *
-from functions import *
+from utils import (ready_symbols, get_csv_rows, ready_id, check_tables, get_data)
+import pandas as pd
+import pymongo
+from pymongo.errors import BulkWriteError
+from bson.objectid import ObjectId
+from bson.son import SON
+from bson.code import Code
+import datetime, time
+import pprint
+import re
+import json
 
 
-db = SqliteDatabase('stocks.db')
-class BaseModel(Model): 
-    class Meta:
-        database = db
+start = time.time()
+# Days
+days = int(input("Enter the number of desired past days for retrieving data: "))
+# Symbols
+symbols = ["43362635835198978", "778253364357513", "20865316761157979"]
+# Symbols csv
+market = 'http://www.tsetmc.com/tsev2/data/MarketWatchInit.aspx?h=0&r=0' 
+# History
+inst_calendar = 'http://www.tsetmc.com/tsev2/data/InstCalendar.aspx?i='
 
-class plotting(BaseModel):
-    i = CharField()
-    m_date = CharField()
-    opening_price = FloatField()
-    closing_price = FloatField()
+market_rows = get_csv_rows(market, 'MarketWatchInit.csv')
+symbols_reformatted = ready_symbols(market_rows)
 
-class Signs(BaseModel):
-    i = CharField()
-    izin_code = CharField()
-    brief_name = CharField()
-    complete_name = CharField()
-    col5 = CharField()
-    initial = CharField()
-    latest = CharField()
-    last_trans = CharField()
-    trans_num = CharField()
-    trans_turnovers = CharField()
-    trans_values = CharField()
-    lowest = CharField()
-    highest = CharField()
-    yesterday = CharField()
-    Eps = CharField()
-    basis_turnovers = CharField()
-    col17 = CharField()
-    col18 = CharField()
-    gp_code = CharField()
-    allowed_hp = CharField()
-    allowed_lp = CharField()
-    all_trans_nums = CharField()
-    col23 = CharField()
+# DB client
+client = pymongo.MongoClient('localhost', 27017)
+# DB
+db = client.stock_market
 
-class i_d(BaseModel):
-    i = CharField()
-    s_date = DateField()
-    m_date = CharField()
-    last_price = CharField()
-    trans_turnovers = CharField()
-    flag = CharField()
+# Symbols Collection
+coll_symbols = db.symbols
 
-class BestLimitData(BaseModel):
-    i = CharField()
-    m_date = CharField()
-    time  = TimeField()
-    row = CharField()
-    buying_num = CharField()
-    buying_turnover = CharField()
-    buying_price = CharField()
-    selling_price = CharField()
-    selling_turnover = CharField()
-    people_num = CharField()
+# Transactions Colletion
+coll_transactions = db.transactions
 
-class ClosingPriceData(BaseModel):
-        i = CharField()
-        m_date = CharField()
-        date = DateTimeField()
-        last_trans = CharField() 
-        latest_price = CharField()
-        initial_price = CharField()
-        yesterday_price = CharField()
-        highest_price = CharField()
-        lowest_price = CharField()
-        trans_num = CharField()
-        trans_turnovers = CharField()
-        trans_values = CharField()
+# Bestlimitdata Collection, shows if the transaction is about buying or selling
+coll_bestlimitdata = db.bestlimitdata
 
-class IntraTradeData(BaseModel):
-    i = CharField()
-    m_date = CharField()
-    trans_num = CharField()
-    time = TimeField() 
-    turnover = CharField()
-    price = CharField()
+# Closingpricedata Collection, shows the general informations for each symbol from the first transcation to last per day
+coll_closingpricedata = db.closingpricedata
+coll_intradaypricedata = db.intradaypricedata
+coll_intratradedata = db.intratradedata
 
-class IntraDayPriceData(BaseModel):
-    number = IntegerField(primary_key=True)
-    i = CharField()
-    m_date = CharField()
-    time = TimeField() 
-    initial_price = CharField() 
-    lowest_price = CharField()
-    highest_price = CharField()
-    latest_price = CharField()
-    Turnover = CharField()
+# Indexing
+result = coll_symbols.create_index([('symbol_code', pymongo.ASCENDING)], unique=True)
 
-db.connect()
-count = 0
-num = int(input("Enter the number of desired past days for retrieving data:"))
-the_4_i = ["43362635835198978","778253364357513","20865316761157979","44891482026867833"]
-market = 'http://www.tsetmc.com/tsev2/data/MarketWatchInit.aspx?h=0&r=0'
-instcalendar = 'http://www.tsetmc.com/tsev2/data/InstCalendar.aspx?i='
-m_rows = get_csv(market,'MarketWatchInit.csv')
-splitted = ready_signs(m_rows)
+'''
+    کد نماد
+    symbol_code
+    کد آیذین
+    izin_code
+    نام کوتاه
+    brief_name
+    نام کامل
+    complete_name
+    زمان آخرین معامله
+    latest_trans_time
+    اولین قیمت
+    first_price
+    آخرین قیمت
+    latest_price
+    آخرین معامله
+    last_trans
+    تعداد معاملات
+    trans_num
+    حجم معاملات
+    trans_turnovers
+    ارزش معاملات
+    trans_value
+    بازه‌ی روز
+    lowest
+    بازه‌ی روز
+    highest
+    قیمت دیروز
+    yesterday_price
+    (درآمد هر سهم (حاصل تقسیم کل درآمد بر تعداد سهم
+    Eps
+    حجم مبنا
+    basis_turnovers
+    col17
+    col18
+    gp_code
+    بالاترین قیمت مجاز
+    allowed_highestprice
+    پائین ترین قیمت مجاز
+    allowed_lowestprice
+    تعداد سهام
+    all_trans_nums
+    col23
+'''
 
-# checking if signs table exists, if not it will be created
-if check_tables(db,'signs'):
-    db.create_tables([Signs])
-    for item in splitted:
-        Signs.create(i = item[0],izin_code = item[1],brief_name = item [2],complete_name = item[3],col5 = item[4],\
-            initial = item[5],latest = item[6],last_trans = item[7],trans_num = item[8],trans_turnovers = item[9],\
-            trans_values = item[10],lowest = item[11],highest = item[12],yesterday = item[13],Eps = item[14],\
-            basis_turnovers = item[15],col17 = item[16],col18 = item[17],gp_code = item[18],allowed_hp = item[19],\
-            allowed_lp = item[20],all_trans_nums = item[21],col23 = item[22])
-else:
-    rows = Signs.select(Signs.id)
-    for item,row in zip(splitted,rows):
-        Signs.update(i = item[0],izin_code = item[1],brief_name = item [2],complete_name = item[3],col5 = item[4],\
-            initial = item[5],latest = item[6],last_trans = item[7],trans_num = item[8],trans_turnovers = item[9],\
-            trans_values = item[10],lowest = item[11],highest = item[12],yesterday = item[13],Eps = item[14],\
-            basis_turnovers = item[15],col17 = item[16],col18 = item[17],gp_code = item[18],allowed_hp = item[19],\
-            allowed_lp = item[20],all_trans_nums = item[21],col23 = item[22]).where(Signs.id == row.id)
+# insert data into collection
+for i in range(len(symbols_reformatted)):
+    # Update if exists
+    symbol_code = symbols_reformatted[i][0]
+    # print(symbols_reformatted[i][1])
+    query = { "symbol_code": symbol_code }
+    new_values = { "$set": {
+        'izin_code': symbols_reformatted[i][1],
+        'brief_name': symbols_reformatted[i][2],
+        'complete_name': symbols_reformatted[i][3],
+        'latest_trans_time': symbols_reformatted[i][4],
+        'first_price': symbols_reformatted[i][5],
+        'latest_price': symbols_reformatted[i][6],
+        'last_trans': symbols_reformatted[i][7],
+        'trans_num': symbols_reformatted[i][8],
+        'trans_turnovers': symbols_reformatted[i][9],
+        'trans_value': symbols_reformatted[i][10],
+        'lowest': symbols_reformatted[i][11],
+        'highest': symbols_reformatted[i][12],
+        'yesterday_price': symbols_reformatted[i][13],
+        'Eps': symbols_reformatted[i][14],
+        'basis_turnovers': symbols_reformatted[i][15],
+        'col17': symbols_reformatted[i][16],
+        'col18': symbols_reformatted[i][17],
+        'gp_code': symbols_reformatted[i][18],
+        'allowed_highestprice': symbols_reformatted[i][19],
+        'allowed_lowestprice': symbols_reformatted[i][20],
+        'all_trans_nums': symbols_reformatted[i][21],
+        'col23': symbols_reformatted[i][22],
+    }}
+    modified = coll_symbols.update_one(query, new_values)
 
-if check_tables(db,'i_d'):
-    db.create_tables([i_d])
-    for i in the_4_i:
-        inst = instcalendar + i
-        i_rows = get_csv(inst,'InstCalendar.csv')
-        ready_rows = ready_id(i_rows,i)
-        for row in ready_rows:
-            i_d.create(i = row[0],s_date = row[1],m_date = row[2],last_price = row[3],trans_turnovers = row[4],\
-            flag = row[5])
-else:
-    rows = i_d.select(i_d.id)
-    for i in the_4_i:
-        inst = instcalendar + i
-        i_rows = get_csv(inst,'InstCalendar.csv')
-        ready_rows = ready_id(i_rows,i)
-        for ready_row,row in zip(ready_rows,rows):
-            i_d.update(i = ready_row[0],s_date = ready_row[1],m_date = ready_row[2],last_price = ready_row[3],\
-            trans_turnovers = ready_row[4],flag = ready_row[5]).where(i_d.id == row.id)
+    # Insert
+    if modified.matched_count == 0:
+        data = {
+            'symbol_code': symbols_reformatted[i][0],
+            'izin_code': symbols_reformatted[i][1],
+            'brief_name': symbols_reformatted[i][2],
+            'complete_name': symbols_reformatted[i][3],
+            'latest_trans_time': symbols_reformatted[i][4],
+            'first_price': symbols_reformatted[i][5],
+            'latest_price': symbols_reformatted[i][6],
+            'last_trans': symbols_reformatted[i][7],
+            'trans_num': symbols_reformatted[i][8],
+            'trans_turnovers': symbols_reformatted[i][9],
+            'trans_value': symbols_reformatted[i][10],
+            'lowest': symbols_reformatted[i][11],
+            'highest': symbols_reformatted[i][12],
+            'yesterday_price': symbols_reformatted[i][13],
+            'Eps': symbols_reformatted[i][14],
+            'basis_turnovers': symbols_reformatted[i][15],
+            'col17': symbols_reformatted[i][16],
+            'col18': symbols_reformatted[i][17],
+            'gp_code': symbols_reformatted[i][18],
+            'allowed_highestprice': symbols_reformatted[i][19],
+            'allowed_lowestprice': symbols_reformatted[i][20],
+            'all_trans_nums': symbols_reformatted[i][21],
+            'col23': symbols_reformatted[i][22],
+        }
+        rs = coll_symbols.insert_one(data)
 
-for i in the_4_i:
-    i_date = i_d.select(i_d.i,i_d.m_date,i_d.flag).where(i_d.i == i)
+
+# Print collection as dataframe
+# coll_symbols_cursor = coll_symbols.find()
+# df_coll_symbols =  pd.DataFrame(list(coll_symbols_cursor))
+# print(coll_symbols.count_documents({}))
+# print(df_coll_symbols)
+
+
+'''
+    کد نماد
+    symbol_code
+    تاریخ جلالی
+    jalali_date
+    تاریخ میلادی
+    gregorian_date
+    آخرین قیمت
+    last_price
+    حجم معاملات
+    trans_turnovers
+    نشان میدهد که اطلاعات برای ۴ جدول دیگر در آن تاریخ خاص گرفته شده است یا خیر
+    is_retrieved
+'''
+
+collist = db.list_collection_names()
+
+# Transactions
+for i in symbols:
+    inst = inst_calendar + i
+    raw_rows = get_csv_rows(inst, 'InstCalendar.csv')
+    reformatted_rows = ready_id(raw_rows, i)
+
+    # rows are reversed in order to add rows from the biggest date to the latest saved date in combinition with else*.
     
-    for i_and_date in i_date[-num : ]:      # loop through desired days
-        print("Retrieving data...")
-        working_i = i_and_date.i
-        date = i_and_date.m_date
-        flag = i_and_date.flag
-        soup = get_data('i=' + working_i + '&d=' + date)
-        # getting source code
-        if flag == "0":
-            print("Saving data...")
-            # getting tags if weren't gotten before
-            if check_tables(db,"ClosingPriceData"):
-                db.create_tables([ClosingPriceData])
-            ClosingPriceData_tag = re.findall(r'ClosingPriceData=(.+);',soup)
-            C_rows = eval(ClosingPriceData_tag[0])
-            db.create_tables([ClosingPriceData])
-            for row in C_rows:
-                del row[1]
-                del row[-2:]
-                ClosingPriceData.create(i = working_i,m_date = date,date = row[0],last_trans = row[1],\
-                latest_price = row[2],initial_price = row[3],yesterday_price = row[4],highest_price = row[5],\
-                lowest_price = row[6],trans_num = row[7],trans_turnovers = row[8],trans_values = row[9])
+    # check if collection exists insert all data
+    if "transactions" not in collist:
+        working_rows = reformatted_rows
+    # reverse list if collection existed so it wont iterate saved data
+    else:
+        working_rows = reformatted_rows[ : :-1]
 
-            if check_tables(db,"IntraDayPriceData"):
-                db.create_tables([IntraDayPriceData])
+    new_id_trans = coll_transactions.count_documents({})
+
+    for row in working_rows:
+
+        gregorian_date  = row[2]
+        gregorian_date = gregorian_date[:4] + "-" + gregorian_date[4:6] + "-" + gregorian_date[6:]
+        
+        new_id_trans += 1
+
+        data = {
+            '_id': new_id_trans, 
+            'symbol_code': row[0],
+            'jalali_date': row[1],
+            'gregorian_date': gregorian_date,
+            'last_price': row[3],
+            'trans_turnovers': row[4],
+            'is_retrieved': row[5],
+        }
+        query = {'symbol_code': row[0]}
+        result = list(coll_transactions.find(query).sort("_id", -1)) #Descending
+
+        # if the transaction collection is not empty
+        if (len(result) > 0):    
+            last_saved_transaction = result[0]
+            current_date = last_saved_transaction.get("gregorian_date", False)
+            last_saved_transaction_date = datetime.datetime.strptime(current_date, "%Y-%m-%d").date()
+            current_item_date = datetime.datetime.strptime(gregorian_date, "%Y-%m-%d").date()
+
+            # add data based on date if its newer than last saved record
+            if (last_saved_transaction_date < current_item_date):
+                rs = coll_transactions.insert_one(data)
+
+            # *else mentioned in the top, for ending the loop after reaching the first date which is smaller than the latest saved date.
             else:
-                num = IntraDayPriceData.select(IntraDayPriceData.max(IntraDayPriceData.number))
-                count = num[0].number + 1
-                print(count)
-            IntraDayPriceData_tag = re.findall(r'IntraDayPriceData=(.+);',soup)
-            Intraday_rows = eval(IntraDayPriceData_tag[0])
-            for row in Intraday_rows:
-                IntraDayPriceData.create(number = count,i = working_i,m_date = date,time = row[0],initial_price = row[1],\
-                lowest_price = row[2],highest_price = row[3],latest_price = row[4],Turnover = row[5])
-                count += 1
+                break
 
-            if check_tables(db,"IntraTradeData"):
-                db.create_tables([IntraTradeData])
-            IntraTradeData_tag = re.findall(r'IntraTradeData=(.+);',soup)
-            Intratrade_rows = eval(IntraTradeData_tag[0])
-            for row in Intratrade_rows:
-                row = row[:-1]
-                IntraTradeData.create(i = working_i,m_date = date,trans_num = row[0],time = row[1],\
-                turnover = row[2],price = row[3])
+        # if symbol data wasnt in db
+        else:
+            rs = coll_transactions.insert_one(data)
 
-            if check_tables(db,"BestLimitData"):
-                db.create_tables([BestLimitData])
-            BestLimitData_tag = re.findall(r'BestLimitData=(.+]);',soup)
-            Best_rows = eval(BestLimitData_tag[0])
-            for row in Best_rows:
+# bestlimitdata, closingpricedata, intradaypricedata, intratradedata
+for i in symbols:
+    query = {'symbol_code': i}
+    result = list(coll_transactions.find(query, {"_id": 0, "symbol_code": 1, "gregorian_date": 1, "is_retrieved": 1 }).sort("_id", -1))
+
+    for item in result[:days]:
+
+        symbol_code = item.get("symbol_code")
+        gregorian_date = item.get("gregorian_date").replace("-", "")
+        is_retrieved = item.get("is_retrieved")
+        soup = get_data('i=' + symbol_code + '&d=' + gregorian_date)
+
+        # gregorian_date with dash
+        gregorian_date_ = item.get("gregorian_date")
+
+
+       
+        if (is_retrieved ==  0):
+        
+            # for bestlimitdata collection
+            # this collection holds the informations that shows if a transaction type is buying or selling
+            # this table indicates صف
+            best_limit_data_tags = re.findall(r'BestLimitData=(.+]);', soup)
+            best_limit_data_rows = eval(best_limit_data_tags[0])
+            new_id_best = coll_bestlimitdata.count_documents({})
+
+            # rows for bestlimitdata collection
+            for row in best_limit_data_rows:
+
                 row[0] = str(row[0])
+
                 if len(row[0]) < 6:
                     row[0] = row[0][0] + ':' + row[0][2:4] + ':' + row[0][4:]
                 else:
                     row[0] = row[0][:2] + ':' + row[0][2:4] + ':' + row[0][4:]
-                    BestLimitData.create(i = working_i,m_date = date,time = row[0],row = row[1],\
-                    buying_num = row[2],buying_turnover = row[3],buying_price = row[4],selling_price = row[5],\
-                    selling_turnover = row[6],people_num = row[7])
-            i_d.update(flag = "1" ).where((i_d.i == working_i) & (i_d.m_date == date)).execute()   
 
-for i in the_4_i:
-    if check_tables(db,"plotting"):
-        db.create_tables([plotting])
-    i_date = IntraDayPriceData.select(IntraDayPriceData.m_date).where(IntraDayPriceData.i == i)
-    days = {row.m_date for row in i_date}
-    for day in days:
-        opening = IntraDayPriceData.select(IntraDayPriceData.initial_price).where(IntraDayPriceData.i == i, \
-        IntraDayPriceData.m_date == day).limit(1)
-        print([item.initial_price for item in opening])
-        closing = IntraDayPriceData.select(IntraDayPriceData.latest_price).where(IntraDayPriceData.i == i,\
-        IntraDayPriceData.m_date == day).order_by(IntraDayPriceData.number.desc()).limit(1)
-        plotting.create(i = i,m_date = day,opening_price = opening[0].initial_price,closing_price = closing[0].latest_price)
+                new_id_best += 1
 
-print('Done =)')
+                data = {
+                    '_id': new_id_best,
+                    'symbol_code': symbol_code, 
+                    'gregorian_data': gregorian_date_,
+                    'time': row[0],
+                    'row_number': row[1],
+                    'buying_num': row[2],
+                    'buying_turnover': row[3],
+                    'buying_price': row[4],
+                    'selling_price': row[5],
+                    'selling_turnover': row[6],
+                    'selling_num': row[7],
+                }
+
+                rs = coll_bestlimitdata.insert_one(data)
+
+
+            # for closingpricedata collection
+            # this collection holds the informations that shows general informations about transactions from the beginning of the 
+            # day till end of the day 
+            closingPriceData_tag = re.findall(r'ClosingPriceData=(.+);',soup)
+            c_rows = eval(closingPriceData_tag[0])
+            new_id_close = coll_closingpricedata.count_documents({})
+
+            # rows for closingpricedata collection
+            for row in c_rows:
+
+                del row[1]
+                del row[-2:]
+                jalali_date, time_ = row[0].split(" ")
+
+                new_id_close += 1
+
+                data = {
+                    '_id': new_id_close, 
+                    'symbol_code': symbol_code,
+                    'gregorian_date': gregorian_date_,
+                    'jalali_date': jalali_date,
+                    'time': time_,
+                    'last_trans': row[1],
+                    "latest_price": row[2],
+                    "initial_price": row[3],
+                    "yesterday_price": row[4],
+                    "highest_price": row[5],
+                    "lowest_price": row[6],
+                    "trans_num": row[7],
+                    "trans_turnovers": row[8],
+                    "trans_values": row[9],
+                }
+
+                rs = coll_closingpricedata.insert_one(data)
+
+
+            # for intradaypricedata collection
+            # this collection holds information that are stored in a box plot in the crawled website
+            intraDayPriceData_tag = re.findall(r'IntraDayPriceData=(.+);',soup)
+            intraday_rows = eval(intraDayPriceData_tag[0])
+            new_id_intraday = coll_intradaypricedata.count_documents({})
+
+            # rows for intradaypricedata collection
+            for row in intraday_rows:
+                
+                new_id_intraday += 1
+
+                data = {
+                    '_id': new_id_intraday, 
+                    'symbol_code': symbol_code,
+                    'gregorian_date': gregorian_date_,
+                    'jalali_date': jalali_date,
+                    'time': row[0],
+                    'initial_price': row[1],
+                    'lowest_price': row[2],
+                    'highest_price': row[3],
+                    'latest_price': row[4],
+                    'turnovers': row[5],
+                }
+
+                rs = coll_intradaypricedata.insert_one(data)
+
+        
+            # for intratradedata collection
+            # this collection holds information in the transactions list 
+            intraTradeData_tag = re.findall(r'IntraTradeData=(.+);',soup)
+            intratrade_rows = eval(intraTradeData_tag[0])
+            new_id_intratrade = coll_intratradedata.count_documents({})
+
+            for row in intratrade_rows:
+                
+                row = row[:-1]
+                new_id_intratrade += 1
+
+                data = {
+                    '_id': new_id_intratrade, 
+                    'symbol_code': symbol_code,
+                    'gregorian_date': gregorian_date_,
+                    'trans_num': row[0],
+                    'time': row[1],
+                    'turnovers': row[2],
+                    'price': row[3],
+                }
+
+                rs = coll_intratradedata.insert_one(data)
+
+        
+            # for updating transaction flag
+            query = {"symbol_code": symbol_code, "gregorian_date": gregorian_date_}
+            new_values = { 
+                "$set": {
+                    'is_retrieved': 1,
+                }
+            }           
+            modified = coll_transactions.update_one(query, new_values)
+
+
+# Plotting
+# gathering data for plot
+for i in symbols:
+    query = { "symbol_code": i }
+    symbol_date = list(coll_intradaypricedata.find(query, { "gregorian_date": 1 }))
+    plotting_days = {row.get("gregorian_date") for row in symbol_date}
+    
+    for day in plotting_days:
+        op_query = { "symbol_code": i, "gregorian_date": day }
+        opening = list(coll_intradaypricedata.find(op_query, { "initial_price": 1 }).limit(1))
+        cl_query = { "symbol_code": i, "gregorian_date": day }
+        closing = list(coll_intradaypricedata.find(cl_query, { "latest_price": 1 }).sort("_id", -1).limit(1))
+        
+        data = {
+            "symbol_code": i,
+            "gregorian_date": day,
+            "opening_price": opening[0].get("initial_price"),
+            "closing_price": closing[0].get("latest_price")
+        }
+        print(data)
+
+
+
+
+
+
+# write database as json 
+colls_list = [
+    coll_symbols,
+    coll_transactions,
+    coll_bestlimitdata, 
+    coll_closingpricedata, 
+    coll_intradaypricedata, 
+    coll_intratradedata
+]
+
+for collection in colls_list:
+    cursor = collection.find({}, {"_id":0})
+    file = open("{}.json".format(collection.name), "w")
+    file.write('[')
+    for document in cursor:
+        file.write(json.dumps(document, sort_keys=True, indent=4))
+        file.write(',')
+    file.write(']')
+
+end = time.time()
+
+print("time elapsed:", end-start)
