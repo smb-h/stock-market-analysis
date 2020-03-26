@@ -31,6 +31,18 @@ db = client.stock_market
 
 # Symbols Collection
 coll_symbols = db.symbols
+
+# Transactions Colletion
+coll_transactions = db.trading_days
+
+# Bestlimitdata Collection, shows if the transaction is about buying or selling
+coll_bestlimitdata = db.bestlimitdata
+
+# Closingpricedata Collection, shows the general informations for each symbol from the first transcation to last per day
+coll_closingpricedata = db.closingpricedata
+coll_intradaypricedata = db.intradaypricedata
+coll_intratradedata = db.coll_intratradedata
+
 # Indexing
 result = coll_symbols.create_index([('symbol_code', pymongo.ASCENDING)], unique=True)
 
@@ -163,10 +175,7 @@ for i in range(len(symbols_reformatted)):
     is_retrieved
 '''
 
-# Transactions Colletion
-coll_transactions = db.trading_days
 # coll_transactions.drop()
-transaction_index = 0
 
 for i in symbols:
     inst = inst_calendar + i
@@ -177,8 +186,10 @@ for i in symbols:
     for row in reformatted_rows[ : :-1]:
         gregorian_date  = row[2]
         gregorian_date = gregorian_date[:4] + "-" + gregorian_date[4:6] + "-" + gregorian_date[6:]
+        new_id_trans = coll_transactions.count_documents({}) + 1
+
         data = {
-            '_id': transaction_index, 
+            '_id': new_id_trans, 
             'symbol_code': row[0],
             'jalali_date': row[1],
             'gregorian_date': gregorian_date,
@@ -188,10 +199,9 @@ for i in symbols:
         }
         query = {'symbol_code': row[0]}
         result = list(coll_transactions.find(query).sort("_id", -1)) #descending
-        new_id = coll_transactions.count_documents({})
 
-        # check last record of symbol in db
-        if (result):
+        # if the transaction collection is not empty
+        if (len(result) > 0):    
             last_saved_transaction = result[0]
             current_date = last_saved_transaction.get("gregorian_date", False)
             last_saved_transaction_date = datetime.datetime.strptime(current_date, "%Y-%m-%d").date()
@@ -199,7 +209,6 @@ for i in symbols:
 
             # add data based on date if its newer than last saved record
             if (last_saved_transaction_date < current_item_date):
-                data["_id"] = new_id
                 rs = coll_transactions.insert_one(data)
 
             # *else mentioned in the top, for ending the loop after reaching the first date which is smaller than the latest saved date.
@@ -208,14 +217,8 @@ for i in symbols:
 
         # if symbol data wasnt in db
         else:
-            data["_id"] = new_id
             rs = coll_transactions.insert_one(data)
 
-
-        transaction_index += 1
-
-# Bestlimitdata Collection
-coll_bestlimitdata = db.bestlimitdata
 
 for i in symbols:
     query = {'symbol_code': i}
@@ -232,12 +235,17 @@ for i in symbols:
         gregorian_date_ = item.get("gregorian_date")
 
 
-        # for bestlimitdata collection
+       
         if (is_retrieved ==  0):
         
+            # for bestlimitdata collection
+            # this collection holds the informations that shows if a transaction type is buying or selling
+            # this table indicates صف
             best_limit_data_tags = re.findall(r'BestLimitData=(.+]);', soup)
             best_limit_data_rows = eval(best_limit_data_tags[0])
+            new_id_best = coll_bestlimitdata.count_documents({}) + 1
 
+            # rows for bestlimitdata collection
             for row in best_limit_data_rows:
 
                 row[0] = str(row[0])
@@ -247,7 +255,10 @@ for i in symbols:
                 else:
                     row[0] = row[0][:2] + ':' + row[0][2:4] + ':' + row[0][4:]
 
+                new_id_best += 1
+
                 data = {
+                    '_id': new_id_best,
                     'symbol_code': symbol_code, 
                     'gregorian_data': gregorian_date_,
                     'time': row[0],
@@ -262,23 +273,122 @@ for i in symbols:
 
                 rs = coll_bestlimitdata.insert_one(data)
 
-            query = {"symbol_code": symbol_code, "gregorian_date": gregorian_date_}
-            new_values = { "$set": {
-                'is_retrieved': 1,
-            }}
 
+            # for closingpricedata collection
+            # this collection holds the informations that shows general informations about transactions from the beginning of the 
+            # day till end of the day 
+            closingPriceData_tag = re.findall(r'ClosingPriceData=(.+);',soup)
+            c_rows = eval(closingPriceData_tag[0])
+            new_id_close = coll_closingpricedata.count_documents({})
+
+            # rows for closingpricedata collection
+            for row in c_rows:
+
+                del row[1]
+                del row[-2:]
+                jalali_date, time_ = row[0].split(" ")
+
+                new_id_close += 1
+
+                data = {
+                    '_id': new_id_close, 
+                    'symbol_code': symbol_code,
+                    'gregorian_date': gregorian_date_,
+                    'jalali_date': jalali_date,
+                    'time': time_,
+                    'last_trans': row[1],
+                    "latest_price": row[2],
+                    "initial_price": row[3],
+                    "yesterday_price": row[4],
+                    "highest_price": row[5],
+                    "lowest_price": row[6],
+                    "trans_num": row[7],
+                    "trans_turnovers": row[8],
+                    "trans_values": row[9],
+                }
+
+                rs = coll_closingpricedata.insert_one(data)
+
+
+            # for intradaypricedata collection
+            # this collection holds information that are stored in a box plot in the crawled website
+            intraDayPriceData_tag = re.findall(r'IntraDayPriceData=(.+);',soup)
+            intraday_rows = eval(intraDayPriceData_tag[0])
+            new_id_intraday = coll_intradaypricedata.count_documents({})
+
+            # rows for intradaypricedata collection
+            for row in intraday_rows:
+                
+                new_id_intraday += 1
+
+                data = {
+                    '_id': new_id_intraday, 
+                    'symbol_code': symbol_code,
+                    'gregorian_date': gregorian_date_,
+                    'jalali_date': jalali_date,
+                    'time': row[0],
+                    'initial_price': row[1],
+                    'lowest_price': row[2],
+                    'highest_price': row[3],
+                    'latest_price': row[4],
+                    'turnover': row[5],
+                }
+
+                rs = coll_intradaypricedata.insert_one(data)
+
+        
+            # for intratradedata collection
+            # this collection holds information in the transactions list 
+            intraTradeData_tag = re.findall(r'IntraTradeData=(.+);',soup)
+            intratrade_rows = eval(intraTradeData_tag[0])
+            new_id_intratrade = coll_intratradedata.count_documents({})
+
+            for row in intratrade_rows:
+                
+                row = row[:-1]
+                new_id_intratrade += 1
+
+                data = {
+                    '_id': new_id_intratrade, 
+                    'symbol_code': symbol_code,
+                    'gregorian_date': gregorian_date_,
+                    'trans_num': row[0],
+                    'time': row[1],
+                    'turnovers': row[2],
+                    'price': row[3],
+                }
+
+                rs = coll_intratradedata.insert_one(data)
+
+        
+            # for updating transaction flag
+            query = {"symbol_code": symbol_code, "gregorian_date": gregorian_date_}
+            new_values = { 
+                "$set": {
+                    'is_retrieved': 1,
+                }
+            }           
             modified = coll_transactions.update_one(query, new_values)
 
 
 # write database as json 
-#for collection in [coll_symbols, coll_transactions, coll_bestlimitdata]:
-#    cursor = collection.find({}, {"_id":0})
-#    file = open("{}.json".format(collection.name), "w")
-#    file.write('[')
-#    for document in cursor:
-#        file.write(json.dumps(document, sort_keys=True, indent=4))
-#        file.write(',')
-#    file.write(']')
+colls_list = [
+    coll_symbols,
+    coll_transactions,
+    coll_bestlimitdata, 
+    coll_closingpricedata, 
+    coll_intradaypricedata, 
+    coll_intratradedata,
+]
+
+for collection in colls_list:
+    cursor = collection.find({}, {"_id":0})
+    file = open("{}.json".format(collection.name), "w")
+    file.write('[')
+    for document in cursor:
+        file.write(json.dumps(document, sort_keys=True, indent=4))
+        file.write(',')
+    file.write(']')
 
 end = time.time()
 
