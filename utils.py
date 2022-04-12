@@ -9,15 +9,11 @@ def ready_symbols(rows):
         parameters = rows that are gotten from csv file as list
         returns = a list of rows that are ready to be saved 
     '''
-    splitted_row = list()
+    splitted_row = []
     for items in rows:
         for row in items:
             splitted_row_2 = row.split(',')
-            if len(splitted_row_2) == 8:
-                pass
-                # for i in range(15):
-                #     splitted_row_2.append('')
-            else:
+            if len(splitted_row_2) != 8:
                 splitted_row.append(splitted_row_2)
     return splitted_row
 
@@ -27,7 +23,7 @@ def get_csv_rows(url, name):
         parameters = url of the csv file to download
         returns = a list of csv file rows 
     '''
-    rows = list()
+    rows = []
     try:
         r = requests.get(url)
         pwd = os.getcwd()
@@ -41,14 +37,13 @@ def get_csv_rows(url, name):
             with open(name) as handle:
                 info = handle.read()
             infos = info.split('@')
-            for item in infos[2:-1]:
-                rows.append(item.split(';'))
-            return rows
+            rows.extend(item.split(';') for item in infos[2:-1])
         else:
             with open ('InstCalendar.csv') as handle:
                 file = handle.read()
             rows = file.split(';')
-            return rows
+
+        return rows
 
 # Reformat data
 def ready_id(rows, i):
@@ -56,7 +51,7 @@ def ready_id(rows, i):
         parameters = a list of rows gotten from csv file, i as string
         returns = a list of rows that are ready to be inserted to db i_d table 
     '''
-    new_rows = list()
+    new_rows = []
     for row in rows:
         items = row.split(',')
         row = (i,) + tuple(items) + (0,)
@@ -69,17 +64,13 @@ def check_tables(db, table_name):
     ''' parameters = db connection object, table name as string
         returns = True if table doesnt exist in db '''
     tables = list(db.get_tables())
-    if table_name not in tables:
-        return True
-    else:
-        return False
+    return table_name not in tables
 
 
 def get_data(id):
     ''' parameters = i=izincode&d=date as string
         returns = cleaned string of source code '''
-    url = 'http://cdn.tsetmc.com/Loader.aspx?ParTree=15131P&' + id
+    url = f'http://cdn.tsetmc.com/Loader.aspx?ParTree=15131P&{id}'
     page = requests.get(url)
-    soup = str(BeautifulSoup(page.text, 'html.parser'))
-    return soup
+    return str(BeautifulSoup(page.text, 'html.parser'))
 

@@ -1,7 +1,7 @@
 # https://api.mongodb.com/python/current/index.html
 
 
-import pymongo 
+import pymongo
 import pprint
 from bson.objectid import ObjectId
 from bson.son import SON
@@ -31,14 +31,14 @@ if "posts" in collist:
 
 
 # print collection as a df
-col_data = [data for data in coll_posts.find()]
+col_data = list(coll_posts.find())
 print(col_data) # this is as a json format
 df_col_data = pd.DataFrame(col_data)
 print(df_col_data)
 
 # insert one
 for i in range(10):
-    data = { "name": "John" + str(i), "address": "Highway 37" }
+    data = {"name": f"John{str(i)}", "address": "Highway 37"}
     x = coll_posts.insert_one(data)
     x_id = x.inserted_id
     print(x)
@@ -110,10 +110,10 @@ for post in coll_posts.find({"date": {"$lt": d}}).sort("author"):
    pprint.pprint(post)
 # exclude ids
 for x in coll_posts.find({},{ "_id": 0, "name": 1, "address": 1 }):
-    print(x) 
+    print(x)
 # exclude addresses
 for x in coll_posts.find({},{ "address": 0 }):
-    print(x) 
+    print(x)
 # You get an error if you specify both 0 and 1 values in the same object (except if one of the fields is the _id field)
 # for x in coll_posts.find({},{ "name": 1, "address": 0 }):
 #     print(x) 
@@ -218,7 +218,7 @@ reducer = Code("""
 #      mapper, reducer, "myresults", query={"x": {"$lt": 2}})
 # for doc in results.find():
 #    pprint.pprint(doc)
-    
+
 # You can use SON or collections.OrderedDict to specify a different database to store the result collection
 # pprint.pprint(db.things.map_reduce(mapper, reducer, out=SON([("replace", "results"), ("db", "outdb")]), full_response=True))
 
