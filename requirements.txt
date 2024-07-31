@@ -2,7 +2,7 @@ beautifulsoup4==4.8.2
 bs4==0.0.1
 certifi==2024.7.4
 chardet==3.0.4
-idna==2.9
+idna==3.7
 numpy==1.22.0
 pandas==1.0.2
 pymongo==3.10.1
