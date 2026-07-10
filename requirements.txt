@@ -10,5 +10,5 @@ python-dateutil==2.8.1
 pytz==2019.3
 requests==2.32.2
 six==1.14.0
-soupsieve==2.0
+soupsieve==2.8.4
 urllib3==2.7.0
